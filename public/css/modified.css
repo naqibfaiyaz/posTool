@@ -1,0 +1,795 @@
+#app{
+    padding-bottom: 10rem;
+    background-color: #f7f7f7;
+    max-width: 90%;
+}
+
+.body-color{
+    background-color: #f7f7f7;
+}
+
+.navbar-toggler{
+    border:none;
+    font-size: 1.2rem;
+    padding: 8px;
+}
+
+.btn-transparent{
+    background-color: transparent;
+    font: .9rem;
+    padding: 8px;
+    border: none;
+}
+
+.font-color-black{
+    color: #000;
+    text-align: center;
+}
+
+.font-color-white{
+    color: #fff;
+    text-align: center;
+}
+
+.font-color-star{
+    color: #fed61e;
+    text-align: center;
+}
+
+.modified-card{
+    background-color: #f7f7f7;
+    /* padding-top: 16px; */
+    border: none;
+}
+
+.modified-outside-card{
+    border: none;
+}
+.modified-inside-card{
+    background-color: white;
+    border: none;
+    width: 95%;
+}
+.py-4{
+    padding-top: 1rem!important;
+}
+
+.padding-all{
+    padding-left: 1rem;
+}
+.padding-none{
+    padding-left: 0;
+}
+.profile-img-backgroud{
+    background-color: gray;
+    object-fit: cover;
+}
+
+.profile-img-text{
+    position: absolute;
+    padding-left: .9rem;
+    font-size: .9rem;
+    line-height: 1;
+}
+
+.profile-img-msisdn{
+    position: absolute;
+    padding-left: 1rem;
+    padding-top: 1.2rem;
+    font-size: .7rem;
+    opacity: 0.6;
+}
+
+.star-border{
+    background-color: white;
+    border: 4px white solid;
+}
+
+.star-text-padding{
+    padding-left: 8px;
+    padding-right: 15px;
+}
+
+.star-holder{
+    display: inline; 
+    background-color: lightgrey; 
+    border-radius: 10px;
+}
+
+.card-padding{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.card-background-color{
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 7px;
+    background-color: #fff;
+}
+
+.icon-text{
+    font-size: .7rem;
+}
+
+.icon-padding{
+    padding: 0;
+}
+
+.icon-row-padding{
+    padding: .7rem;
+    font-size: .7rem;
+}
+
+.card-total-padding{
+  padding: 0 5px 0 5px;
+}
+
+.center-icon-block{
+    display: block;
+    margin: auto;
+    text-align: center;
+}
+
+.bg-white{
+    background-color: white;
+}
+
+.main-content{
+    padding-top: 1rem!important;
+    background-color: white;
+}
+/* ---------------------------------------------------
+    SIDEBAR STYLE
+----------------------------------------------------- */
+
+#sidebar {
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: -250px;
+    height: 100vh;
+    z-index: 999;
+    background: #f7f7f7;
+    color: rgba(0, 0, 0, 0.8);
+    transition: all 0.3s;
+    overflow-y: scroll;
+    /* box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2); */
+}
+
+#sidebar.active {
+    left: 0;
+}
+
+#dismiss {
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+    background: #f7f7f7;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    -webkit-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+}
+
+#dismiss:hover {
+    background: #fff;
+    color: #f7f7f7;
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 998;
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+    top:0;
+}
+.overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #343a40;
+    color: #f7f7f7;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #f7f7f7;
+}
+
+#sidebar ul p {
+    color: rgba(0,0,0, .8);
+    padding: 10px;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+}
+
+#sidebar ul li a:hover {
+    color: rgba(0,0,0,1);
+    background: #fff;
+}
+
+#sidebar ul li.active>a,
+a[aria-expanded="true"] {
+    color: rgba(0,0,0,1);
+    background: #fff;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background: #f7f7f7;
+}
+
+ul.CTAs {
+    padding: 20px;
+}
+
+ul.CTAs a {
+    text-align: center;
+    font-size: 0.9em !important;
+    display: block;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+a.download {
+    background: #fff;
+    color: #f7f7f7;
+}
+
+a.article,
+a.article:hover {
+    background: #f7f7f7 !important;
+    color: #fff !important;
+}
+
+/* ---------------------------------------------------
+    CONTENT STYLE
+----------------------------------------------------- */
+
+#content {
+    width: 100%;
+    /* padding: 20px; */
+    min-height: 100vh;
+    transition: all 0.3s;
+    position: absolute;
+    top: 60px;
+    right: 0;
+}
+
+.search-box {
+  width: 85%;
+  font-size: .5rem;
+  border: 2px solid #ccc;
+  background-repeat: no-repeat;
+  -webkit-transition: width 1s ease-in;
+  transition: width 1s ease-in;
+  outline: none !important;
+  color: white;
+}
+
+#searchBar {
+  width: 25%;
+  color: white;
+  outline: none !important;
+}
+
+#searchBar:focus {
+  width: 75%;
+  color: white;
+  border: 2px solid #ccc;
+  background-repeat: no-repeat;
+  -webkit-transition: width .4s ease-in;
+  transition: width .4s ease-in;
+  outline: none !important;
+}
+
+/* .search-box[type=text]:focus {
+  font-size: .8rem;
+  color: #fff;
+  box-sizing: border-box;
+  
+  border-radius: 4px;
+  width: 80%;
+  outline:none !important;
+} */
+
+.fixed-search{
+  padding: .5rem;
+  outline: none !important;
+}
+
+html,body{
+  height: 100%;
+}
+
+.navbar-fixed-top{
+  height: 60px; /* must not use percents here, must be 80px*/
+}
+
+.navbar-fixed-bottom{
+  height: 60px; /* must not use percents here, must be 60px*/    
+}
+
+#content {
+  position: fixed;
+  top: 60px;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  overflow:auto;
+}
+
+.multi-item-carousel {
+  overflow: hidden;
+  /* border: 5px #f7f7 solid; */
+}
+.multi-item-carousel img {
+  height: auto;
+  width: 150%;
+  border: 5px #f7f7f7 solid;
+}
+.multi-item-carousel .carousel-control.left, 
+.multi-item-carousel .carousel-control.right {
+    background: rgba(255, 255, 255, 0.3);
+    width: 25%;
+}
+.multi-item-carousel .carousel-inner {
+  width: 150%;
+  left: -25%;
+}
+.carousel-inner > .item.next, 
+.carousel-inner > .item.active.right {
+    -webkit-transform: translate3d(25%, 0, 0);
+    transform: translate3d(25%, 0, 0);
+}
+.carousel-inner > .item.prev, 
+.carousel-inner > .item.active.left {
+    -webkit-transform: translate3d(-25%, 0, 0);
+    transform: translate3d(-25%, 0, 0);
+}
+.item_third {
+  float: left;
+  width: 33.33333333%;
+}
+
+.carousel-indicators li {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin: 1px;
+  text-indent: -999px;
+  cursor: pointer;
+  background-color: #000;
+  background-color: rgba(0,0,0,0);
+  border: 1px solid #fff;
+  border-radius: 10px;
+}
+
+.carousel-indicators{
+  margin: auto;
+}
+
+.nav-tabs-icon-list {
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: -webkit-box;  
+  display: -moz-box;   
+  border: none;
+}
+.nav-tabs>li {
+  float:none;
+}
+
+.dropdown-menu{
+  padding: .7rem;
+  margin: auto;
+  right: 0;
+  left: auto;
+  width: 200px;
+}
+
+.inline-icon{
+  display: inline;
+  margin: 5px 10px 5px 10px;
+}
+
+.auto-margin{
+    margin: auto;
+}
+
+.front-row {
+    border-radius: 5px;
+    background-color: #f7f7f7;
+    border-color: transparent;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.front-row-blue {
+    border-radius: 5px;
+    background-color: #3490dc;
+    border-color: transparent;
+    margin: auto;
+    margin-top: 10px;
+}
+
+.items{
+    background-color: #fcfcfc;
+    border-radius: 2px;
+}
+
+.orderListSection{
+    min-height: 25rem;
+    margin: auto;
+}
+
+.orderListBottomSection{
+    margin: auto;
+    border: 1px #d8d8d8 solid;
+    padding: 5px;
+    background-color: aliceblue;
+}
+
+.grandTotal{
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.grandTotalDiv{
+    margin: auto;
+    border: 1px #fcfcfc solid;
+    padding: 5px;
+    background-color: #3490dc;
+    color: #fff;
+}
+
+.min-width-small-device{    
+    min-width: 300px;
+}
+
+.paymentSection{
+    text-align: center;
+    min-height: 2.5rem;
+    border: 1px #fcfcfc solid;
+    background-color: #32a50e;
+    border-radius: 5px;
+    padding: 1rem;
+    color: #fff;
+    cursor: pointer;
+}
+
+.bottomSection{
+    text-align: center;
+    min-height: 2.5rem;
+    border: 1px #fcfcfc solid;
+    background-color: #6c757d;
+    border-radius: 5px;
+    padding: 1rem;
+    color: #fff;
+    cursor: pointer;
+}
+
+.anchor_tag{
+    color: #fff;
+}
+
+.anchor_tag:hover{
+    text-decoration: none;
+    color: #fff;
+}
+
+.disabled_div{
+    background-color: #cccccc;
+    color: #666666;
+    cursor: default;
+}
+
+.disabled_anchor_tag {
+    pointer-events: none;
+    cursor: default;
+ }
+
+ /* Basic reset */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	
+	/* Better text styling */
+	font: bold 14px Arial, sans-serif;
+}
+
+/* Finally adding some IE9 fallbacks for gradients to finish things up */
+
+/* A nice BG gradient */
+html {
+	height: 100%;
+	background: white;
+	background: radial-gradient(circle, #fff 20%, #ccc);
+	background-size: cover;
+}
+
+/* Using box shadows to create 3D effects */
+#calculator, #discountTable {
+	width: 22rem;
+	
+	margin: 50px auto;
+	padding: 10px;
+	
+	background: grey;
+    background: linear-gradient(#f3f3f3, white);
+    border: 1px #f9f9f9 solid;
+	border-radius: 1px;
+	box-shadow: 0px 1px grey, 0px 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+.top{
+    padding: 10px;
+}
+
+/* Inset shadow on the screen to create indent */
+.top .screen {
+	height: 40px;
+	width: 150px;
+	
+	float: right;
+	
+	padding: 10px;
+	
+	background: rgba(0, 0, 0, 0.2);
+	border-radius: 3px;
+	box-shadow: inset 0px 4px rgba(0, 0, 0, 0.2);
+	
+	/* Typography */
+	font-size: 17px;
+	line-height: 40px;
+	color: white;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+	text-align: right;
+	letter-spacing: 1px;
+}
+
+/* Clear floats */
+.keys, .top {overflow: hidden;}
+
+/* Applying same to the keys */
+.keys span, .top span.clear {
+	float: left;
+	position: relative;
+	top: 0;
+	
+	cursor: pointer;
+	
+	width: 66px;
+	height: 36px;
+	
+	background: white;
+    /* border-radius: 3px; */
+    border: 1px #f9f9f9 solid;
+	box-shadow: 0px 4px rgba(0, 0, 0, 0.2);
+	
+	margin: 0 7px 11px 0;
+	
+	color: #888;
+	line-height: 36px;
+	text-align: center;
+	
+	/* prevent selection of text inside keys */
+	user-select: none;
+	
+	/* Smoothing out hover and active states using css3 transitions */
+	transition: all 0.2s ease;
+}
+
+/* Remove right margins from operator keys */
+/* style different type of keys (operators/evaluate/clear) differently */
+.keys span.operator {
+	background: #FFF0F5;
+	margin-right: 0;
+}
+
+.keys span.eval {
+	background: #f1ff92;
+	box-shadow: 0px 4px #9da853;
+	color: #888e5f;
+}
+
+.top span.clear {
+	background: #ff9fa8;
+	box-shadow: 0px 4px #ff7c87;
+	color: white;
+}
+
+/* Some hover effects */
+.keys span:hover {
+	opacity: .5;
+}
+
+.keys span.eval:hover {
+	background: #abb850;
+	box-shadow: 0px 4px #717a33;
+	color: #ffffff;
+}
+
+.top span.clear:hover {
+	background: #f68991;
+	box-shadow: 0px 4px #d3545d;
+	color: white;
+}
+
+/* Simulating "pressed" effect on active state of the keys by removing the box-shadow and moving the keys down a bit */
+.keys span:active {
+	box-shadow: 0px 0px #6b54d3;
+	top: 4px;
+}
+
+.keys span.eval:active {
+	box-shadow: 0px 0px #717a33;
+	top: 4px;
+}
+
+.top span.clear:active {
+	top: 4px;
+	box-shadow: 0px 0px #d3545d;
+}
+
+#appendBox{
+    overflow-y: auto;
+    max-height: 25rem;
+    margin: 0 auto;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgb(0, 92, 167); 
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(0, 122, 192); 
+}
+
+/* The snackbar - position it at the bottom and in the middle of the screen */
+#snackbar {
+    visibility: hidden; /* Hidden by default. Visible on click */
+    min-width: 250px; /* Set a default minimum width */
+    margin-left: -125px; /* Divide value of min-width by 2 */
+    background-color: rgb(1, 51, 109); /* Black background color */
+    color: #fff; /* White text color */
+    text-align: center; /* Centered text */
+    border-radius: 2px; /* Rounded borders */
+    padding: 16px; /* Padding */
+    position: fixed; /* Sit on top of the screen */
+    z-index: 1; /* Add a z-index if needed */
+    left: 50%; /* Center the snackbar */
+    top: 50px; /* 30px from the bottom */
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+#snackbar.show {
+    visibility: visible; /* Show the snackbar */
+
+/* Add animation: Take 0.5 seconds to fade in and out the snackbar. 
+However, delay the fade out process for 2.5 seconds */
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+    from {top: 0; opacity: 0;} 
+    to {top: 50px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {top: 0; opacity: 0;}
+    to {top: 50px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {top: 50px; opacity: 1;} 
+    to {top: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {top: 50px; opacity: 1;}
+    to {top: 0; opacity: 0;}
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+  }
+  
+  .switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 20px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
