@@ -51,8 +51,8 @@ $(document).ready(function () {
     $('.finalProcess').on('click', function(){
         console.log('finalProcess');
         $('.finalProcess').hide();
-        ClickHereToPrint();
-        // location.reload();
+        printData();
+        setTimeout(function(){location.reload();},2000);
     })
 
     $(".dropdown-menu").on('click', 'a', function(){
@@ -162,7 +162,7 @@ $(document).ready(function () {
         if(!$('.menuItems').length || !exists){
             var orderedMenu='<div class="row itemNo_' + item_no + '" style="width: 100%; margin: 0 auto; height: 75px; background-color: white; border: 1px #f9f9f9 solid;" id="menuItem_' + selectedItem['id'] + '">' + 
                 '<div class="col py-3 menuItems" style="text-align: left;" id="menuItem_name_' + item_no + '">'+ selectedItem['name'] + '</div>' +
-                '<div class="col py-3 menuItemQuantity" style="text-align: center;" id="menuItem_quantity_' + item_no + '"><a id="orderIncrease" href="#" onclick="itemIncrease(' + item_no + ');"><i class="fas fa-plus"></i></a><span> 1 </span><a id="orderIncrease" href="#" onclick="itemDecrease(' + item_no + ');"><i class="fas fa-minus" id="orderDecrease"></i></a></div>' + 
+                '<div class="col py-3 menuItemQuantity" style="text-align: center;" id="menuItem_quantity_' + item_no + '"><a id="orderIncrease" href="#" onclick="itemIncrease(' + selectedItem['id'] + ', ' + item_no + ');"><i class="fas fa-plus"></i></a><span> 1 </span><a id="orderIncrease" href="#" onclick="itemDecrease(' + selectedItem['id'] + ', '  + item_no + ');"><i class="fas fa-minus" id="orderDecrease"></i></a></div>' + 
                 '<div class="col py-3 priceMenu" style="text-align: right;" id="menuItem_price_' + item_no + '" data-price="' + selectedItem['price'] + '">৳<span>' + selectedItem['price'] + '</span></div>' + 
                 '<div class="col-1 py-3"><a href="#" id="deleteRow" onclick="deleteRow(' + item_no + ');"><i class="fas fa-times" style="color: red;"></i></a></div>' + 
                 '</div>';
@@ -174,17 +174,29 @@ $(document).ready(function () {
     });
 });
 
-function itemIncrease(item_no){
-    newQuantity=parseInt($('#menuItem_quantity_' + item_no).text().trim())+1;
-    $('#menuItem_quantity_' + item_no + ' span').text(" " + newQuantity + " ");
+function itemIncrease(catalog_id, item_no){
+    AllQuantity=JSON.parse(localStorage.getItem("quantity"));
+    CurrentItemQuantity=AllQuantity.find(x => x.catalog_id === catalog_id).quantity;
+    QuantitySelected=parseInt($('#menuItem_quantity_' + item_no).text().trim());
+    
+    if(QuantitySelected<CurrentItemQuantity){
+        newQuantity=QuantitySelected+1;
+        $('#menuItem_quantity_' + item_no + ' span').text(" " + newQuantity + " ");
 
-    base_price=parseInt($('#menuItem_price_' + item_no).data()['price']);
-    new_price=base_price*newQuantity;
-    $('#menuItem_price_' + item_no + ' span').text(new_price);
+        base_price=parseInt($('#menuItem_price_' + item_no).data()['price']);
+        new_price=base_price*newQuantity;
+        $('#menuItem_price_' + item_no + ' span').text(new_price);
+    }else{
+        show_toast(401, "Inventory Finished. Please check.");
+    }
 }
 
-function itemDecrease(item_no){
-    newQuantity=parseInt($('#menuItem_quantity_' + item_no).text().trim())-1;
+function itemDecrease(catalog_id, item_no){
+    AllQuantity=JSON.parse(localStorage.getItem("quantity"));
+    CurrentItemQuantity=AllQuantity.find(x => x.catalog_id === catalog_id).quantity;
+    QuantitySelected=parseInt($('#menuItem_quantity_' + item_no).text().trim());
+
+    newQuantity=QuantitySelected-1;
     if(newQuantity>0){
         $('#menuItem_quantity_' + item_no + ' span').text(" " + newQuantity + " ");
 
@@ -218,14 +230,6 @@ function show_toast(status, msg) {
 
 function printData()
 {
-   var divToPrint=document.getElementById("printSection");
-   newWin= window.open("");
-   newWin.document.write(divToPrint.outerHTML + "<br/>" + "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" + divToPrint.outerHTML);
-   newWin.print(1);
-   newWin.close();
-}
-
-function ClickHereToPrint(){
     var now=$.now();
     var d1=new Date();
     var year=d1.getFullYear();
@@ -245,27 +249,6 @@ function ClickHereToPrint(){
         '</tr>';
     }
     
-    // $('#appendBox .menuItems').each(function(){
-    // var itemList='<tr>' +
-    //     '<td style="padding: 10px 0 0 0;">Cheese Beef</td>' +
-    //     '<td style="text-align: right; padding: 10px 0 0 0;">x2</td>' +
-    //     '<td style="text-align: right; padding: 10px 0 0 0;">৳340</td>' +
-    // '</tr>' +
-    // '<tr>' +
-    //     '<td>Cheese Chicken</td>' +
-    //     '<td style="text-align: right;">x3</td>' +
-    //     '<td style="text-align: right;">৳410</td>' +
-    // '</tr>' +
-    // '<tr>' +
-    //     '<td>Classic Beef</td>' +
-    //     '<td style="text-align: right;">x2</td>' +
-    //     '<td style="text-align: right;">৳660</td>' +
-    // '</tr>';
-    // });
-    // console.log($(this).text());
-    // console.log($('#appendBox .menuItems').text() + '<br/>');
-    // console.log($('#appendBox .menuItemQuantity').text() + '<br/>');
-    // console.log($('#appendBox .priceMenu').text() + '<br/>');
     var printTable='<table>' +
         '<tr>' +
             '<td>Order #:</td>' +
@@ -336,16 +319,40 @@ function ClickHereToPrint(){
     '</table>'
 
     $('#printSection div').append(printTable);
+   var divToPrint=document.getElementById("printSection");
+   newWin= window.open("",'Print-Window');
+   newWin.document.open();
+   var Count = 0;
+   while (Count < 2){
+    newWin.document.write('<html><body onload="window.print(0)">'+divToPrint.innerHTML + "<br/>" + "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" + divToPrint.innerHTML+'</body></html>');
+     Count++;
+     console.log(Count);
+   }
+   
+   newWin.document.close();
+   newWin.close();
+}
+
+function ClickHereToPrint(){
+    
     try{
       var oIframe = document.getElementById('ifrmPrint');
       var oContent = document.getElementById('printSection').innerHTML;
       var oDoc = (oIframe.contentWindow || oIframe.contentDocument);
       if (oDoc.document) oDoc = oDoc.document;
     //   oDoc.write('<head><title>title</title>');
-      oDoc.write('<body onload="this.focus(); this.print();" style="max-width: 300px;">');
+      oDoc.write('<body onload="this.focus(); window.print();" style="max-width: 300px;">');
       oDoc.write(oContent + '</body>');
-      oDoc.close();
+      setTimeout(function(){oDoc.close();},5000);
     } catch(e){
       self.print(0);
+    }
+  }
+
+function NewPrint(Copies){
+    var Count = 0;
+    while (Count < Copies){
+      window.print(0);
+      Count++;
     }
   }

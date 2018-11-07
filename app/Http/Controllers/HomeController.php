@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\catalog;
 use App\catalogcategory;
+use App\catalogQuantity;
 
 class HomeController extends Controller
 {
@@ -27,6 +28,8 @@ class HomeController extends Controller
     {
         $catalog = catalog::where('status', 1)->get();
         $category= catalogcategory::all();
-        return view('home')->with(compact('catalog', $catalog))->with(compact('category', $category));
+        $quantity= catalogQuantity::all();
+        // dd($catalog, $category, $quantity);
+        return view('home')->with(compact('catalog', $catalog))->with(compact('category', $category))->with(compact('quantity', $quantity));
     }
 }
