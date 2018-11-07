@@ -3,9 +3,9 @@
 @section('content')
 <script>
   var user = {!! auth()->user()->toJson() !!};
-  localStorage.setItem("catalog", JSON.stringify({!! $catalog ? "$catalog": "" !!}));
-  localStorage.setItem("category", JSON.stringify({!! $category ? "$category" : "" !!}));
-  localStorage.setItem("quantity", JSON.stringify({!! $quantity ? "$quantity" : "" !!}));
+  localStorage.setItem("catalog", JSON.stringify({!! isset($catalog) ? "$catalog": "" !!}));
+  localStorage.setItem("category", JSON.stringify({!! isset($category) ? "$category" : "" !!}));
+  localStorage.setItem("quantity", JSON.stringify({!! isset($quantity) ? "$quantity" : "" !!}));
 </script>
 <script src="{{asset('js/jquery-1.12.4.js')}}"></script>
 <script src="{{ asset('js/prefixfree.js') }}" type="text/javascript" type="text/javascript"></script>
