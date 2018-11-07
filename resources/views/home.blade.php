@@ -83,33 +83,35 @@
         </div>
         <div class="col col-lg-6 min-width-small-device">
             <div class="panel panel-primary" id='catalog'>
-                @foreach ($category as $categorykey => $categoryitem)
-                    <a href="#" class="list-group-item front-row" style="padding-bottom: 20px;">
-                        <span class="text-muted small">
-                            <h4>{{ $categoryitem['name'] }}</h4>
-                        </span>
-                    </a>
-                    <div class="row">
-                    @foreach ($catalog as $catalogkey => $catalogitem)
-                        @if($catalogitem['category_id']==$categoryitem['id'])
-                            <div class="col col-lg-3">
-                                <div class="panel panel-primary items">
-                                    <a id="catalog_{{ $catalogitem['id'] }}" class="catalog_id" href="#">
-                                        <div class="panel-heading">
-                                            <div class="row justify-content-center font-color-black">{{ $catalogitem['name'] }}</div>
-                                            <div class="row justify-content-center"><img src="{{ asset('images/catalog/') .'/'.$catalogitem['image'] }}" width=100 height=100 alt="CMPM" class="img-circle"/></div>
-                                        </div>
-                                        <div class="panel-footer">
-                                            <span class="row justify-content-center font-color-black">৳{{ $catalogitem['price'] }}</span>
-                                            <div class="clearfix"></div>
-                                        </div>
-                                    </a>
+                @if(isset($category))
+                    @foreach ($category as $categorykey => $categoryitem)
+                        <a href="#" class="list-group-item front-row" style="padding-bottom: 20px;">
+                            <span class="text-muted small">
+                                <h4>{{ $categoryitem['name'] }}</h4>
+                            </span>
+                        </a>
+                        <div class="row">
+                        @foreach ($catalog as $catalogkey => $catalogitem)
+                            @if($catalogitem['category_id']==$categoryitem['id'])
+                                <div class="col col-lg-3">
+                                    <div class="panel panel-primary items">
+                                        <a id="catalog_{{ $catalogitem['id'] }}" class="catalog_id" href="#">
+                                            <div class="panel-heading">
+                                                <div class="row justify-content-center font-color-black">{{ $catalogitem['name'] }}</div>
+                                                <div class="row justify-content-center"><img src="{{ asset('images/catalog/') .'/'.$catalogitem['image'] }}" width=100 height=100 alt="CMPM" class="img-circle"/></div>
+                                            </div>
+                                            <div class="panel-footer">
+                                                <span class="row justify-content-center font-color-black">৳{{ $catalogitem['price'] }}</span>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
-                        @endif
+                            @endif
+                        @endforeach
+                        </div>
                     @endforeach
-                    </div>
-                @endforeach
+                @endif
             </div>
             <div id="popupnav" class="row panel panel-primary list-group-item front-row-blue" style="display:none;">
             <button id="backButton" class="btn btn-primary" type="button">
