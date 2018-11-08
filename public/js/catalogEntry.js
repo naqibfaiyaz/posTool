@@ -221,11 +221,11 @@ function show_toast(status, msg) {
 
     setTimeout(function(){  
 		x.removeClass("show"); 
-	}, 5000);
+	}, 3000);
 	
 	setTimeout(function(){  
 		x.css("background-color","rgb(1, 51, 109)");
-	}, 6000);
+	}, 3000);
 }
 
 function printData()

@@ -29,7 +29,7 @@ class HomeController extends Controller
         $catalog = catalog::where('status', 1)->get();
         $category= catalogcategory::all();
         $quantity= catalogQuantity::all();
-        // dd($catalog, $category, $quantity);
+        
         return view('home')->with(compact('catalog', $catalog))->with(compact('category', $category))->with(compact('quantity', $quantity));
     }
 }

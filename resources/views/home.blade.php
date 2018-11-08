@@ -36,10 +36,10 @@
 
 <script src="{{ asset('js/calculator.js') }}" type="text/javascript" type="text/javascript"></script>
 <script src="{{ asset('js/catalogEntry.js') }}" type="text/javascript" type="text/javascript"></script>
-<div class="container" id="app">
+<div class="container" id="app" style="display: contents;">
 <iframe name="iframe_a" id="ifrmPrint" style="display: none;"></iframe>
-    <div class="row card-background-color">
-        <div class="col col-lg-6 min-width-small-device">
+    <div class="row card-background-color" style="margin: 10px; height: 95%;">
+        <div class="col col-lg-6 min-width-small-device" style="height: 95%;">
             <div class="row panel panel-primary list-group-item front-row-blue"  id='orderList'>
                 <div class="dropdown">
                     <button class="btn btn-primary customerType" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -54,7 +54,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row orderListSection front-row"  id='orderListBox'>
+            <div class="row orderListSection front-row"  id='orderListBox' style="min-height: 60%;">
                 <h1 class="text-muted" style="margin: auto; text-align: center;" id="noOrderText">Order is Empty<br/> Please add</h1>
                 <div id="appendBox" class="w-100"></div>
             </div>
@@ -81,7 +81,7 @@
                 </div>
             </div>
         </div>
-        <div class="col col-lg-6 min-width-small-device">
+        <div class="col col-lg-6 min-width-small-device h-100">
             <div class="panel panel-primary" id='catalog'>
                 @if(isset($category))
                     @foreach ($category as $categorykey => $categoryitem)
