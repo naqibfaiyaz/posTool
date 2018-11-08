@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\catalog;
-use App\catalogcategory;
+use App\catalogCategory;
 use App\catalogQuantity;
 
 class HomeController extends Controller
@@ -27,7 +27,7 @@ class HomeController extends Controller
     public function index()
     {
         $catalog = catalog::where('status', 1)->get();
-        $category= catalogcategory::all();
+        $category= catalogCategory::all();
         $quantity= catalogQuantity::all();
         
         return view('home')->with(compact('catalog', $catalog))->with(compact('category', $category))->with(compact('quantity', $quantity));
