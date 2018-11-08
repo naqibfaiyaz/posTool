@@ -38,7 +38,7 @@
 <script src="{{ asset('js/catalogEntry.js') }}" type="text/javascript" type="text/javascript"></script>
 <div class="container" id="app" style="display: contents;">
 <iframe name="iframe_a" id="ifrmPrint" style="display: none;"></iframe>
-    <div class="row card-background-color" style="margin: 10px; height: 95%;">
+    <div class="row card-background-color" style="margin: 5px; height: 90%;">
         <div class="col col-lg-6 min-width-small-device" style="height: 95%;">
             <div class="row panel panel-primary list-group-item front-row-blue"  id='orderList'>
                 <div class="dropdown">
