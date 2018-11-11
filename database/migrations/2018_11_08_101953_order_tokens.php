@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CatalogTable extends Migration
+class OrderTokens extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,10 @@ class CatalogTable extends Migration
      */
     public function up()
     {
-        Schema::create('catalogs', function (Blueprint $table) {
+        Schema::create('order_tokens', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->unique();
-            $table->integer('category_id');
-            $table->string('image');
-            $table->float('price');
-            $table->boolean('status');
-            $table->boolean('discount_status');
+            $table->integer('curr_token_no');
+            $table->date('token_date')->useCurrent();
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ class CatalogTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('catalogs');
+        Schema::dropIfExists('order_tokens');
     }
 }

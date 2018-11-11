@@ -17,4 +17,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/GetCatalog', 'catalogQuery@index')->name('home');
+Route::get('/GetCatalog', 'catalogController@index')->name('home');

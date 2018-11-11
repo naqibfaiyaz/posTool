@@ -52,7 +52,7 @@ $(document).ready(function () {
         console.log('finalProcess');
         $('.finalProcess').hide();
         printData();
-        setTimeout(function(){location.reload();},2000);
+        // setTimeout(function(){location.reload();},2000);
     })
 
     $(".dropdown-menu").on('click', 'a', function(){
@@ -90,6 +90,17 @@ $(document).ready(function () {
     $('#discountTable .keys').click(function (event) {
         $('#discountTable .screen').val($(event.target).text().slice(0, -1));
     });
+    
+    $("#discountToggle").change(function() {
+        $('#DiscountAmount span').text('0.00');
+        $('#totalAmount span').text(parseFloat($('#subTotal span').text()).toFixed(2));
+        $('#appendBox .priceMenu').each(function(){
+            currentId=$(this).data("catalogid");
+            $('#priceList' + currentId + " span").removeClass('strike-through');
+            $('#discountList' + currentId + " span").text(parseFloat($('#priceList' + currentId + " span").text()));
+            $('#discountList' + currentId).css( "display", "none");
+        });
+    });
 
     $('#ApplyDiscount').on('click', function () {
         if($('#discountToggle').is(':checked')){
@@ -99,9 +110,28 @@ $(document).ready(function () {
         }
         var discountValue=parseFloat(($.trim($('#discountTable .screen').val())/100));
         var subTotalValue=parseFloat($('#subTotal span').text());
+        var discountInamount=null;
+        var totalAfterDiscount=null;
         if(discountType=='%'){
-            discountInamount=subTotalValue*discountValue;
-            totalAfterDiscount=subTotalValue*(1-discountValue);
+            $('#appendBox .priceMenu').each(function(){
+                currentId=$(this).data("catalogid");
+                
+                var itemOriginalValue=parseFloat($('#priceList' + currentId + " span").text());
+                
+                var catalog=JSON.parse(localStorage.getItem("catalog"));
+                var discountItem=catalog.find(x => x.id === currentId).discount_status;
+                if(discountItem){
+                    var itemValueAfterDiscount=itemOriginalValue*(1-discountValue);
+
+                    $('#priceList' + currentId + " span").addClass('strike-through');
+                    $('#discountList' + currentId + " span").text( itemValueAfterDiscount);
+                    $('#discountList' + currentId).css( "display", "block");
+                }else{
+                    var itemValueAfterDiscount=itemOriginalValue;
+                };
+                discountInamount+=itemOriginalValue-itemValueAfterDiscount;
+                totalAfterDiscount+=itemValueAfterDiscount;
+            });
         }else{
             discountInamount=parseFloat($.trim($('#discountTable .screen').val()));
             totalAfterDiscount=subTotalValue-discountInamount;
@@ -129,7 +159,7 @@ $(document).ready(function () {
 
     $('#catalog, #orderListBox').on('click', function(){
         var sum=0;
-        $('.priceMenu span').each(function(){
+        $('.priceMenu .priceList span').each(function(){
             $('.paymentSection, .bottomSection').removeClass('disabled_div');
             $('.paymentSection, .bottomSection').removeClass('disabled_div');
             sum+=parseFloat($(this).text());
@@ -145,7 +175,7 @@ $(document).ready(function () {
             localStorage.removeItem("selectedItem");
             newItem=previousItem.concat([selectedItem]);
             localStorage.setItem("selectedItem", JSON.stringify(newItem));
-            
+
             item_no=newItem.length;
         }else{
             localStorage.setItem("selectedItem", JSON.stringify([selectedItem]));
@@ -161,9 +191,12 @@ $(document).ready(function () {
         });
         if(!$('.menuItems').length || !exists){
             var orderedMenu='<div class="row itemNo_' + item_no + '" style="width: 100%; margin: 0 auto; height: 75px; background-color: white; border: 1px #f9f9f9 solid;" id="menuItem_' + selectedItem['id'] + '">' + 
-                '<div class="col py-3 menuItems" style="text-align: left;" id="menuItem_name_' + item_no + '">'+ selectedItem['name'] + '</div>' +
+                '<div class="col py-3 menuItems" style="text-align: left;" id="catalogId_' + selectedItem['id'] + '">'+ selectedItem['name'] + '</div>' +
                 '<div class="col py-3 menuItemQuantity" style="text-align: center;" id="menuItem_quantity_' + item_no + '"><a id="orderIncrease" href="#" onclick="itemIncrease(' + selectedItem['id'] + ', ' + item_no + ');"><i class="fas fa-plus"></i></a><span> 1 </span><a id="orderIncrease" href="#" onclick="itemDecrease(' + selectedItem['id'] + ', '  + item_no + ');"><i class="fas fa-minus" id="orderDecrease"></i></a></div>' + 
-                '<div class="col py-3 priceMenu" style="text-align: right;" id="menuItem_price_' + item_no + '" data-price="' + selectedItem['price'] + '">৳<span>' + selectedItem['price'] + '</span></div>' + 
+                '<div class="col py-3 priceMenu" style="text-align: right;" id="menuItem_price_' + item_no + '" data-price="' + selectedItem['price'] + '" data-catalogId="' + selectedItem['id'] + '">' +
+                    '<div class="row col priceList" id="priceList' + selectedItem['id'] + '" style="display: block;" >৳<span>' + selectedItem['price'] + '</span></div>' + 
+                    '<div class="row col text-muted discountList" id="discountList' + selectedItem['id'] + '" style="display: none;" >৳<span>' + selectedItem['price'] + '</span></div>' + 
+                '</div>' + 
                 '<div class="col-1 py-3"><a href="#" id="deleteRow" onclick="deleteRow(' + item_no + ');"><i class="fas fa-times" style="color: red;"></i></a></div>' + 
                 '</div>';
             $('#appendBox').append(orderedMenu);
@@ -235,20 +268,54 @@ function printData()
     var year=d1.getFullYear();
     var month=d1.getMonth()+1;
     var date=d1.getDate();
-    console.log();
+    var hour=d1.getHours();
+    var min=d1.getMinutes();
+    var sec=d1.getSeconds();
+    
     var menuItems=$('#appendBox .menuItems');
     var menuItemQuantity=$('#appendBox .menuItemQuantity');
-    var priceMenu=$('#appendBox .priceMenu');
+    var priceMenu=$('#appendBox .priceMenu .priceList');
+    var priceMenu2=$('#appendBox .priceMenu .priceList span');
+    var discountMenu=$('#appendBox .priceMenu .discountList span');
     var itemList='';
+    var orderDate=year + '-' + (month < 10 ? '0' : '')  + month + '-' + (date < 10 ? '0' : '') + date;
+    var orderTime=(hour < 10 ? '0' : '')  + hour + ':' + (min < 10 ? '0' : '')  + min + ':' + (sec < 10 ? '0' : '')  + sec;
+    var currentToken=getCurrentToken();
+    var orderDataForHistoryAll=[];
+    var discount_rate=parseFloat($('#DiscountAmount span').text())/parseFloat($('#subTotal span').text());
     
+
     for(var i=0; i<menuItems.length; i++){
+        var catalog_id=parseInt($.trim($(menuItems[i]).attr('id').split("_")[1]));
+        var AllQuantity=JSON.parse(localStorage.getItem("quantity"));
+        var CurrentItemQuantity=AllQuantity.find(x => x.catalog_id === catalog_id).quantity;
         itemList+='<tr>' +
             '<td style="padding: 10px 0 0 0;">' + $(menuItems[i]).text() + '</td>' +
             '<td style="text-align: right; padding: 10px 0 0 0;">x' + $.trim($(menuItemQuantity[i]).text()) + '</td>' +
             '<td style="text-align: right; padding: 10px 0 0 0;">' + $(priceMenu[i]).text() + '</td>' +
         '</tr>';
+
+        orderDataForHistory={
+            "token_no" : currentToken,
+            "order_id" : now.toString().slice(0, -3),
+            "order_time" : orderDate + ' ' + orderTime,
+            "seller_name" : user.name,
+            "item_name": $.trim($(menuItems[i]).text()),
+            "item_quantity" : parseInt($.trim($(menuItemQuantity[i]).text())),
+            "item_price"    : parseFloat($.trim($(priceMenu2[i]).text())),
+            "customer_type" : $(".customerType span").text(),
+            "item_discount" : parseFloat($.trim($(priceMenu2[i]).text())) - parseFloat($.trim($(discountMenu[i]).text())),
+            "subtotal": $('#subTotal span').text(),
+            "discount" : $('#DiscountAmount span').text(),
+            "total_price" : $('#totalAmount span').text(),
+            "catalog_id" : catalog_id,
+            "current_quantity" : CurrentItemQuantity,
+        };
+
+        orderDataForHistoryAll.push(orderDataForHistory);
     }
-    
+
+    orderPosting(orderDataForHistoryAll);
     var printTable='<table>' +
         '<tr>' +
             '<td>Order #:</td>' +
@@ -263,12 +330,12 @@ function printData()
         '<tr>' +
             '<td>Order Date:</td>' +
             '<td></td>' +
-            '<td class="sold_date" style="text-align: right;">' + year + '-' + (month < 10 ? '0' : '')  + month + '-' + (date < 10 ? '0' : '') + date +'</td>' +
+            '<td class="sold_date" style="text-align: right;">' + orderDate +'</td>' +
         '</tr>' +
         '<tr>' +
             '<td>Order Time:</td>' +
             '<td></td>' +
-            '<td class="sold_time" style="text-align: right;">' + d1.getHours() + ':' + d1.getMinutes() + ':' + d1.getSeconds() + '</td>' +
+            '<td class="sold_time" style="text-align: right;">' + orderTime + '</td>' +
         '</tr>' +
         '<tr>' +
             '<td>Sales Person:</td>' +
@@ -316,25 +383,21 @@ function printData()
             '<td>Change Due</td>' +
             '<td style="text-align: right;">' + $('.changeDue span').text() + '</td>' +
         '</tr>' +
-    '</table>'
+    '</table>';
+
 
     $('#printSection div').append(printTable);
-   var divToPrint=document.getElementById("printSection");
-   newWin= window.open("",'Print-Window');
-   newWin.document.open();
-   var Count = 0;
-   while (Count < 2){
-    newWin.document.write('<html><body onload="window.print(0)">'+divToPrint.innerHTML + "<br/>" + "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" +  "<br/>" + divToPrint.innerHTML+'</body></html>');
-     Count++;
-     console.log(Count);
-   }
+    var divToPrint=document.getElementById("printSection");
+    newWin= window.open("",'Print-Window');
+    newWin.document.open();
    
-   newWin.document.close();
-   newWin.close();
+    newWin.document.write('<html><body onload="window.print(0)">'+ divToPrint.innerHTML +'</body></html>');
+    $('#printSection div').text("x");
+    newWin.document.close();
+    newWin.close();
 }
 
 function ClickHereToPrint(){
-    
     try{
       var oIframe = document.getElementById('ifrmPrint');
       var oContent = document.getElementById('printSection').innerHTML;
@@ -355,4 +418,41 @@ function NewPrint(Copies){
       window.print(0);
       Count++;
     }
-  }
+}
+
+function orderPosting(data){
+    console.log(data);
+    $.ajax({
+        url: "catalog",
+        method: "POST",
+        data: {data : data},
+        dataType: "json",
+        async: false,
+        beforeSend: function(request) {
+            request.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
+        },
+      }).done(function( data, status, xhr ) {
+        console.log(data);
+      }).fail(function( jqXHR, textStatus ) {
+        alert( "Request failed: " + textStatus );
+      });
+}
+
+function getCurrentToken(){
+    var result="";
+    $.ajax({
+        url: "catalog",
+        method: "GET",
+        dataType: "json",
+        async: false,  
+        beforeSend: function(request) {
+            request.setRequestHeader("X-CSRF-TOKEN", $('meta[name="csrf-token"]').attr('content'));
+        },
+      }).done(function( data, status, xhr ) {
+            result = data.token;
+      }).fail(function( jqXHR, textStatus ) {
+        show_toast( 401, "Token fetch failed. Please try again." );
+      });
+
+    return result;
+}

@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class catalog extends Model
+class orderHistory extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -12,7 +12,7 @@ class catalog extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'category_id', 'image', 'price', 'discount_status'
+        'order_id', 'token_no', 'item_name', 'item_quantity', 'item_price', 'item_discount'
     ];
 
     /**
@@ -23,14 +23,4 @@ class catalog extends Model
     protected $hidden = [
         'created_at', 'updated_at'
     ];
-
-    public function category()
-    {
-        return $this->belongsTo('App\catalogCategory', 'category_id');
-    }
-
-    public function quantity()
-    {
-        return $this->hasOne('App\catalogQuantity', 'catalog_id');
-    }
 }

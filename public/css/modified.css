@@ -793,3 +793,7 @@ However, delay the fade out process for 2.5 seconds */
   .slider.round:before {
     border-radius: 50%;
   }
+
+.strike-through {
+    text-decoration: line-through;
+}
