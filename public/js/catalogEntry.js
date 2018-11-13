@@ -11,7 +11,7 @@ $(document).ready(function () {
     
             reader.onload = function (e) {
                 console.log(e.target.result);
-                var img = $('<img>').attr('src', e.target.result).css({'width' : '100px' , 'height' : '100px'});
+                var img = $('<img>').attr('src', e.target.result).css({'width' : '100px'});
                 $('.upload-image-preview').html(img);
             };
     

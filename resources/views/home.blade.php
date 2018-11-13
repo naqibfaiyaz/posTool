@@ -72,7 +72,7 @@
                                         <a id="catalog_{{ $catalogitem['id'] }}" class="catalog_id" href="#">
                                             <div class="panel-heading">
                                                 <div class="row justify-content-center font-color-black">{{ $catalogitem['name'] }}</div>
-                                                <div class="row justify-content-center"><img src="{{ asset('images/catalog/') .'/'.$catalogitem['image'] }}" width=100 height=100 alt="CMPM" class="img-circle"/></div>
+                                                <div class="row justify-content-center"><img src="{{ asset('images/catalog/') .'/'.$catalogitem['image'] }}" style="height: 4rem;" alt="{{ $catalogitem['image'] }}"/></div>
                                             </div>
                                             <div class="panel-footer">
                                                 <span class="row justify-content-center font-color-black">৳{{ $catalogitem['price'] }}</span>

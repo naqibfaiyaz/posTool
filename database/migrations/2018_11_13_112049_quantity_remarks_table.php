@@ -16,7 +16,8 @@ class QuantityRemarksTable extends Migration
         Schema::create('quantity_remarks', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('quantity_id');
-            $table->integer('quantity_reduced');
+            $table->integer('modified_quantity');
+            $table->boolean('input_type');
             $table->string('remarks');
             $table->string('user');
             $table->timestamps();

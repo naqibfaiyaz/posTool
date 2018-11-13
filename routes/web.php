@@ -32,3 +32,5 @@ Route::put('/changeDiscount/{id}', 'catalogController@changeDiscount')->name('ch
 Route::put('/updateQuantity/{id}', 'catalogController@updateQuantity')->name('updateQuantity');
 
 Route::post('/newInventory', 'catalogController@newInventory')->name('newInventory');
+
+Route::get('/InvRemarks', 'catalogController@InvRemarks')->name('InvRemarks');

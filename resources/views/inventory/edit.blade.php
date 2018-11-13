@@ -31,7 +31,7 @@
                     <input type="text" class="form-control" id="name" name="name"  placeholder="Enter the item Name. eg. Cheese Burger" value="{{$inventory['name']}}">
                 </div>
                 <div class="form-group">
-                    <div class="upload-image-preview"><img src="{{ asset('images/catalog/' . $inventory['image']) }}" height= "100px" width="100px"></div>
+                    <div class="upload-image-preview"><img src="{{ asset('images/catalog/' . $inventory['image']) }}" width=100></div>
                     <label for="image">Image:</label>
                     <input class="form-control" name="image" type="file" id="image" value="{{$inventory['image']}}">
                 </div>
@@ -39,8 +39,8 @@
 
             <div class='col'>
                 <div class="form-group">
-                    <label for="quantity">Decrease Quantity:</label>
-                    <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter how much to decrease" value=0>
+                    <label for="removeQuantity">Decrease Quantity:</label>
+                    <input type="number" class="form-control" min=0 id="removeQuantity" name="removeQuantity" placeholder="Enter how much to decrease" value=0>
                 </div>
                 <div class="form-group">
                     <label for="remarks">Remarks:</label>

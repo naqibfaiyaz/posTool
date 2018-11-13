@@ -12,7 +12,7 @@ class quantityRemark extends Model
     * @var array
     */
     protected $fillable = [
-        'quantity_id', 'quantity_reduced', 'remarks', 'user'
+        'quantity_id', 'modified_quantity', 'remarks', 'user', 'input_type', 'created_at'
     ];
 
     /**
@@ -21,6 +21,11 @@ class quantityRemark extends Model
      * @var array
      */
     protected $hidden = [
-        'created_at', 'updated_at'
+        'updated_at'
     ];
+
+    public function quantityInv()
+    {
+        return $this->belongsTo('App\catalogQuantity', 'quantity_id');
+    }
 }

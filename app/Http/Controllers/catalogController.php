@@ -31,11 +31,11 @@ class catalogController extends Controller
         $catalog=catalog::all()->toArray();
         $catalogQuantity=catalogQuantity::all();
         $catalogCategory=catalogCategory::all();
+        $inventory=[];
         foreach($catalog as $key=>$catalogData){
             $inventory[$key]=$catalogData;
             $inventory[$key]['category']=$catalogCategory->where('id', $catalogData['category_id'])->pluck('name')[0];
             $inventory[$key]['quantity']=$catalogQuantity->where('catalog_id', $catalogData['id'])->pluck('quantity')[0];
-            $inventory[$key]['remarks']=$catalogQuantity->where('catalog_id', $catalogData['id'])->pluck('remarks')[0];
         }
 
         return view('inventory.index')->with(compact('inventory', $inventory));
@@ -147,13 +147,16 @@ class catalogController extends Controller
         $catalogQuantity= new catalogQuantity;
         $quantityRemark=new quantityRemark;
         $catalog=$catalog::find($id);
+        
         $this->validate($request, [
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'name' => 'required',
             'price' => 'required|numeric',
             'discount_status' => 'required|numeric',
+            'removeQuantity' => 'required',
+            'remarks' => 'required_unless:removeQuantity,0'
         ]);
-        
+
         if ($request->hasFile('image')) {
             $path = $request->image->move(public_path('/images/catalog'), $request->image->getClientOriginalName());
             $catalog->image=$request->image->getClientOriginalName();
@@ -173,7 +176,7 @@ class catalogController extends Controller
             $catalogQuantityid=$catalogQuantityData[0]['id'];
             $catalogQuantity=$catalogQuantity::find($catalogQuantityid);
         }
-        $newQuantity=$catalogQuantityData[0]['quantity']-(int)$request->all()['quantity'];
+        $newQuantity=$catalogQuantityData[0]['quantity']-(int)$request->all()['removeQuantity'];
 
         if($newQuantity>=0){
             $catalogQuantity->quantity=$newQuantity;
@@ -182,9 +185,10 @@ class catalogController extends Controller
             return back()->withInput()->with('error_message','Inventory quantity cannot be less than zero');
         }
 
-        if((int)$request->all()['quantity']>0){
+        if((int)$request->all()['removeQuantity']>0){
             $quantityRemark->quantity_id=$catalogQuantityid;
-            $quantityRemark->quantity_reduced=(int)$request->all()['quantity'];
+            $quantityRemark->modified_quantity=(int)$request->all()['removeQuantity'];
+            $quantityRemark->input_type=0;
             $quantityRemark->remarks=$request->all()['remarks'];
             $quantityRemark->user=auth::user()->name;
             $quantityRemark->save();
@@ -251,16 +255,26 @@ class catalogController extends Controller
 
     public function updateQuantity(Request $request, $id){
         $catalogQuantity=new catalogQuantity;
+        $quantityRemark=new quantityRemark;
         $quantityId=$catalogQuantity::select('id')->where('catalog_id', $id)->get('id')->toArray()[0]['id'];
         
         $catalogQuantity=$catalogQuantity::find($quantityId);
         if($catalogQuantity->quantity>=0){
-            $catalogQuantity->quantity=(int)$request->only('currentQuantity')['currentQuantity'];
+            $catalogQuantity->quantity=(int)$request->all()['currentQuantity'] + (int)$request->all()['addQuantity'];
         }else{
             $catalogQuantity->quantity=0;
         }
 
         $catalogQuantity->save();
+
+        if((int)$request->all()['addQuantity']>0){
+            $quantityRemark->quantity_id=$quantityId;
+            $quantityRemark->modified_quantity=(int)$request->all()['addQuantity'];
+            $quantityRemark->input_type=1;
+            $quantityRemark->remarks=auth::user()->name . " added " . (int)$request->all()['addQuantity'] . " items";
+            $quantityRemark->user=auth::user()->name;
+            $quantityRemark->save();
+        }
 
         return redirect('catalog');
     }
@@ -298,5 +312,83 @@ class catalogController extends Controller
         $catalogQuantity->save();
 
         return redirect('catalog');
+    }
+
+    public function InvRemarks(){
+        if(isset($_GET['category_filter'])){
+            $categoryFilter=$_GET['category_filter'];
+        }else{
+            $categoryFilter=null;
+        }
+        
+        if(isset($_GET['item_filter'])){
+            $itemFilter=$_GET['item_filter'];
+        }else{
+            $itemFilter=null;
+        }
+
+        // dump($categoryFilter, $itemFilter);
+        $catalog=new catalog;
+        $catalogQuantity= new catalogQuantity;
+        $catalogCategory=new catalogCategory;
+        $quantityRemark=quantityRemark::all()->toArray();
+        
+        $allRemarks=collect();
+        foreach($quantityRemark as $key=>$remarksData){
+            $inventory=collect();
+            if($remarksData['input_type']){
+                $remarksData['modified_quantity']='+' . $remarksData['modified_quantity'];
+            }else{
+                $remarksData['modified_quantity']='-' . $remarksData['modified_quantity'];
+            }
+            $catalogQuantityRemarks=$catalogQuantity->where('id', $remarksData['quantity_id'])->get()->toArray()[0];
+            $catalogRemarks=$catalog->where('id', $catalogQuantityRemarks['catalog_id'])->get()->toArray()[0];
+            $catalogCategoryRemarks=$catalogCategory->where('id', $catalogRemarks['category_id'])->get()->toArray()[0];
+
+            collect($remarksData)->each(function ($item, $key) use ($inventory){
+                $inventory->put($key,$item);
+            });
+            collect($catalogQuantityRemarks)->each(function ($item, $key) use ($inventory){
+                if($key!='id'){
+                    $inventory->put($key,$item);
+                }
+            });
+            collect($catalogRemarks)->each(function ($item, $key) use ($inventory){
+                if($key=='name'){
+                    $key='item_name';
+                }
+                if($key!='id'){
+                    $inventory->put($key,$item);
+                }
+            });
+            collect($catalogCategoryRemarks)->each(function ($item, $key) use ($inventory){
+                if($key=='name'){
+                    $key='category_name';
+                }
+                if($key!='id'){
+                    $inventory->put($key,$item);
+                }
+            });
+            $allRemarks->push($inventory);
+        }
+
+        $allRemarks = $allRemarks->filter(function ($value, $key) use ($categoryFilter){
+            if($categoryFilter!='all'){
+                return $value['category_name'] == $categoryFilter;
+            }else{
+                return $value;
+            }
+        })->filter(function ($value, $key) use ($itemFilter){
+            if($itemFilter!='all'){
+                return $value['item_name'] ==$itemFilter;
+            }else{
+                return $value;
+            }
+        })->sortByDesc(['item_name'])->values();
+        $allRemarks=$allRemarks->values();
+        $catalogCategory=$catalogCategory::all()->toArray();
+        $catalog=$catalog::all()->toArray();
+
+        return view('inventory.remarks')->with(compact('allRemarks', $allRemarks))->with(compact('catalogCategory', $catalogCategory))->with(compact('catalog', $catalog))->with(compact('categoryFilter', $categoryFilter))->with(compact('itemFilter', $itemFilter));
     }
 }

@@ -11,7 +11,8 @@
     <hr>
 
     <form method='POST' action="{{route('newInventory')}}" enctype="multipart/form-data">
-        <div class='col-lg-6'>
+    <div class='row'>
+        <div class='col'>
             <input type="hidden" name="_token" value="{{ csrf_token() }}">
             <div class="form-group">
                 <label for="category_id">Category Name:</label>
@@ -30,6 +31,8 @@
                 <label for="image">Image:</label>
                 <input class="form-control" name="image" type="file" id="image">
             </div>
+        </div>
+        <div class='col'>
             <div class="form-group">
                 <label for="quantity">Item Quantity:</label>
                 <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter current quantity">
@@ -46,10 +49,10 @@
                 </select>
             </div>
         </div>
-        
-        <div class="form-group col-lg-8 py-5">
-            <button id="submitNewInv" class= 'btn btn-primary'>Submit</button>
-        </div>
+    </div>
+    <div class="form-group col-lg-8 py-5">
+        <button id="submitNewInv" class= 'btn btn-primary'>Submit</button>
+    </div>
     </form>
 </div>
 @endsection

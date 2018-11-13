@@ -17,6 +17,7 @@
                     <th>Category Name</th>
                     <th>Item Name</th>
                     <th>Item Quantity</th>
+                    <th>Add Quantity</th>
                     <th>Item Price</th>
                     <th>Item Status</th>
                     <th>Discount Status</th>
@@ -31,13 +32,15 @@
                     <td>{{ $inventoryData['id'] }}</td>
                     <td>{{ $inventoryData['category']}}</td>
                     <td>{{ $inventoryData['name'] }}</td>
+                    <td>{{ $inventoryData['quantity'] }}</td>
                     <td><form action="{{ route('updateQuantity', $inventoryData['id']) }}" role="form" method="POST" enctype="application/x-www-form-urlencoded">
                             @method('PUT')
                             @csrf
                             <div class="input-group mb-3 input-group-sm">
-                                <input style="width: 4rem;" type="number" min="{{ $inventoryData['quantity'] }}" class="form-control" name="currentQuantity" value="{{ $inventoryData['quantity'] }}" placeholder="Quantity">
+                                <input style="width: 4rem;" type="number" min=0 class="form-control" name="addQuantity" value=0 placeholder="Quantity">
+                                <input name="currentQuantity" hidden value="{{ $inventoryData['quantity'] }}">
                                 <div class="input-group-append">
-                                    <input class="btn btn-success" type="submit" value="Go"/>  
+                                    <input class="btn btn-success" type="submit" value="+"/>  
                                 </div>
                             </div>
                         </form></td>

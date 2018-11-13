@@ -17,7 +17,6 @@ class CatalogQuantities extends Migration
             $table->increments('id');
             $table->integer('catalog_id');
             $table->integer('quantity');
-            $table->string('remarks');
             $table->timestamps();
         });
     }

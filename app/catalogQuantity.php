@@ -12,7 +12,7 @@ class catalogQuantity extends Model
      * @var array
      */
     protected $fillable = [
-        'catalog_id', 'quantity', 'remarks'
+        'catalog_id', 'quantity'
     ];
 
     /**
@@ -23,4 +23,14 @@ class catalogQuantity extends Model
     protected $hidden = [
         'created_at', 'updated_at'
     ];
+
+    public function catalog()
+    {
+        return $this->belongsTo('App\catalog', 'catalog_id');
+    }
+
+    public function remarks()
+    {
+        return $this->hasMany('App\quantityRemark', 'quantity_id');
+    }
 }
