@@ -18,6 +18,17 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
 Route::resource('catalog', 'catalogController');
 
 Route::resource('orderHistory', 'orderHistoryViewController');
+
+Route::get('getOrderToken', 'catalogController@getCurrentToken');
+
+Route::put('/changeStatus/{id}', 'catalogController@changeStatus')->name('changeStatus');
+
+Route::put('/changeDiscount/{id}', 'catalogController@changeDiscount')->name('changeDiscount');
+
+Route::put('/updateQuantity/{id}', 'catalogController@updateQuantity')->name('updateQuantity');
+
+Route::post('/newInventory', 'catalogController@newInventory')->name('newInventory');

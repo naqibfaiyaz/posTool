@@ -15,7 +15,7 @@ class OrderSumHistories extends Migration
     {
         Schema::create('order_sum_histories', function (Blueprint $table) {
             $table->increments('id');
-            $table->double('order_id')->unique();
+            $table->integer('order_id')->unique();
             $table->integer('token_no');
             $table->dateTime('order_time');
             $table->string('customer_type');
@@ -23,6 +23,9 @@ class OrderSumHistories extends Migration
             $table->float('subtotal');
             $table->float('Total_discount');
             $table->float('total_price');
+            $table->float('cash_tendered');
+            $table->float('change_due');
+            $table->float('order_status');
             $table->timestamps();
         });
     }

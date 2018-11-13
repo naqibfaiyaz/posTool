@@ -28,7 +28,8 @@ $(document).ready(function () {
 				var input = document.querySelector('.screen');
 				var inputVal = input.value;
 				var btnVal = '=';
-				calculatorFunction(input, btnVal, inputVal, operators, decimalAdded)
+				// calculatorFunction(input, btnVal, inputVal, operators, decimalAdded)
+				$('.processOrder').click();
 			}
 		}
 

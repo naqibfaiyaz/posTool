@@ -12,7 +12,7 @@ class orderSumHistory extends Model
      * @var array
      */
     protected $fillable = [
-        'order_id', 'token_no', 'order_time', 'customer_type', 'seller_name', 'subtotal', 'Total_discount', 'total_price'
+        'order_id', 'token_no', 'order_time', 'customer_type', 'seller_name', 'subtotal', 'Total_discount', 'total_price', 'cash_tendered', 'change_due', 'order_status'
     ];
 
     /**

@@ -5,6 +5,20 @@ $(document).ready(function () {
         this.val($initialVal);
     };
 
+    $("input[name=image]").change(function () {
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+    
+            reader.onload = function (e) {
+                console.log(e.target.result);
+                var img = $('<img>').attr('src', e.target.result).css({'width' : '100px' , 'height' : '100px'});
+                $('.upload-image-preview').html(img);
+            };
+    
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
     localStorage.removeItem("selectedItem");
     $('#cashButton').on('click', function () {
         $('#catalog').hide();
@@ -18,6 +32,34 @@ $(document).ready(function () {
             '<div class="text-muted py-2 mx-auto" ><h3 style="text-align: center;">Amount Due</h3></div>' +
             '<div class="amountDue  py-2 mx-auto" style="text-align: center;"><span><h1>৳' + $('#totalAmount span').text() +'</h1></span></div>' +
         '</div>');
+    });
+
+    $('#reprintOrder').on('click', function () {
+        orderDataForHistoryAll=[];
+
+        for(var i=0; i<orderDataDetails.length; i++){
+            orderDataForHistory={
+                "token_no" : orderSumHistory[0].token_no,
+                "order_id" : orderSumHistory[0].order_id,
+                "order_time" : orderSumHistory[0].order_time,
+                "seller_name" : orderSumHistory[0].seller_name,
+                "item_name": orderDataDetails[i].item_name,
+                "item_quantity" : orderDataDetails[i].item_quantity,
+                "item_price"    : orderDataDetails[i].item_price,
+                "customer_type" : orderSumHistory[0].customer_type,
+                "item_discount" : orderDataDetails[i].item_discount,
+                "subtotal": orderSumHistory[0].subtotal,
+                "discount" : orderSumHistory[0].Total_discount,
+                "total_price" : orderSumHistory[0].total_price,
+                "catalog_id" : '',
+                "current_quantity" : '',
+                "cash_tendered" : orderSumHistory[0].cash_tendered,
+                "change_due" : orderSumHistory[0].change_due,
+            };
+            orderDataForHistoryAll.push(orderDataForHistory);
+        }
+
+        printData(orderDataForHistoryAll);
     });
 
     $('.processOrder').on('click', function () {
@@ -51,7 +93,8 @@ $(document).ready(function () {
     $('.finalProcess').on('click', function(){
         console.log('finalProcess');
         $('.finalProcess').hide();
-        printData();
+        orderData=prepareData();
+        printData(orderData);
         // setTimeout(function(){location.reload();},2000);
     })
 
@@ -170,7 +213,8 @@ $(document).ready(function () {
     });
 
     $('.catalog_id').click(function (event) {
-        selectedItem=JSON.parse(window.localStorage.getItem("catalog"))[this.id.split("_")[1]-1];
+        selectedItem=JSON.parse(window.localStorage.getItem("catalog")).find(x => x.id == this.id.split("_")[1]);
+        
         if(previousItem=JSON.parse(localStorage.getItem("selectedItem"))){
             localStorage.removeItem("selectedItem");
             newItem=previousItem.concat([selectedItem]);
@@ -192,7 +236,7 @@ $(document).ready(function () {
         if(!$('.menuItems').length || !exists){
             var orderedMenu='<div class="row itemNo_' + item_no + '" style="width: 100%; margin: 0 auto; height: 75px; background-color: white; border: 1px #f9f9f9 solid;" id="menuItem_' + selectedItem['id'] + '">' + 
                 '<div class="col py-3 menuItems" style="text-align: left;" id="catalogId_' + selectedItem['id'] + '">'+ selectedItem['name'] + '</div>' +
-                '<div class="col py-3 menuItemQuantity" style="text-align: center;" id="menuItem_quantity_' + item_no + '"><a id="orderIncrease" href="#" onclick="itemIncrease(' + selectedItem['id'] + ', ' + item_no + ');"><i class="fas fa-plus"></i></a><span> 1 </span><a id="orderIncrease" href="#" onclick="itemDecrease(' + selectedItem['id'] + ', '  + item_no + ');"><i class="fas fa-minus" id="orderDecrease"></i></a></div>' + 
+                '<div class="col py-3 menuItemQuantity" style="text-align: center;" id="menuItem_quantity_' + item_no + '"><a id="orderIncrease" href="#" onclick="itemDecrease(' + selectedItem['id'] + ', '  + item_no + ');"><i class="fas fa-minus" id="orderDecrease"></i></a><span> 1 </span><a id="orderIncrease" href="#" onclick="itemIncrease(' + selectedItem['id'] + ', ' + item_no + ');"><i class="fas fa-plus"></i></a></div>' + 
                 '<div class="col py-3 priceMenu" style="text-align: right;" id="menuItem_price_' + item_no + '" data-price="' + selectedItem['price'] + '" data-catalogId="' + selectedItem['id'] + '">' +
                     '<div class="row col priceList" id="priceList' + selectedItem['id'] + '" style="display: block;" >৳<span>' + selectedItem['price'] + '</span></div>' + 
                     '<div class="row col text-muted discountList" id="discountList' + selectedItem['id'] + '" style="display: none;" >৳<span>' + selectedItem['price'] + '</span></div>' + 
@@ -261,7 +305,7 @@ function show_toast(status, msg) {
 	}, 3000);
 }
 
-function printData()
+function prepareData()
 {
     var now=$.now();
     var d1=new Date();
@@ -289,6 +333,11 @@ function printData()
         var catalog_id=parseInt($.trim($(menuItems[i]).attr('id').split("_")[1]));
         var AllQuantity=JSON.parse(localStorage.getItem("quantity"));
         var CurrentItemQuantity=AllQuantity.find(x => x.catalog_id === catalog_id).quantity;
+        if(CurrentItemQuantity-parseInt($.trim($(menuItemQuantity[i]).text()))>0){
+            var remainingQuantity=CurrentItemQuantity-parseInt($.trim($(menuItemQuantity[i]).text()));
+        }else{
+            show_toast(401, 'Inventory exhausted');
+        }
         itemList+='<tr>' +
             '<td style="padding: 10px 0 0 0;">' + $(menuItems[i]).text() + '</td>' +
             '<td style="text-align: right; padding: 10px 0 0 0;">x' + $.trim($(menuItemQuantity[i]).text()) + '</td>' +
@@ -310,37 +359,51 @@ function printData()
             "total_price" : $('#totalAmount span').text(),
             "catalog_id" : catalog_id,
             "current_quantity" : CurrentItemQuantity,
+            "cash_tendered" : parseFloat($('#calculator .screen').val()),
+            "change_due" : parseFloat($('#calculator .screen').val())-$('#totalAmount span').text(),
+            "remaining_quantity" : remainingQuantity
         };
 
         orderDataForHistoryAll.push(orderDataForHistory);
     }
 
+    console.log(orderDataForHistoryAll);
     orderPosting(orderDataForHistoryAll);
+    
+    return orderDataForHistoryAll;
+}
+
+function printData(orderData){
+    itemList='';
+    for(var i=0; i<orderData.length; i++){
+        itemList+='<tr>' +
+            '<td style="padding: 10px 0 0 0;">' + orderData[i].item_name + '</td>' +
+            '<td style="text-align: right; padding: 10px 0 0 0;">x' + orderData[i].item_quantity + '</td>' +
+            '<td style="text-align: right; padding: 10px 0 0 0;">' + orderData[i].item_price + '</td>' +
+        '</tr>';
+    }
+    console.log(orderData);
+    console.log(orderData[0].token_no);
     var printTable='<table>' +
         '<tr>' +
             '<td>Order #:</td>' +
             '<td></td>' +
-            '<td class="order_no" style="text-align: right;">' + now.toString().slice(0, -3) + '</td>' +
+            '<td class="order_no" style="text-align: right;">' + orderData[0].order_id + '</td>' +
         '</tr>' +
         '<tr>' +
             '<td>Sold To:</td>' +
             '<td></td>' +
-            '<td class="sold_to" style="text-align: right;">' +  $(".customerType span").text() +'</td>' +
-        '</tr>' +
-        '<tr>' +
-            '<td>Order Date:</td>' +
-            '<td></td>' +
-            '<td class="sold_date" style="text-align: right;">' + orderDate +'</td>' +
+            '<td class="sold_to" style="text-align: right;">' +  orderData[0].customer_type +'</td>' +
         '</tr>' +
         '<tr>' +
             '<td>Order Time:</td>' +
             '<td></td>' +
-            '<td class="sold_time" style="text-align: right;">' + orderTime + '</td>' +
+            '<td class="sold_date" style="text-align: right;">' + orderData[0].order_time +'</td>' +
         '</tr>' +
         '<tr>' +
             '<td>Sales Person:</td>' +
             '<td></td>' +
-            '<td class="sales_person" style="text-align: right;">x_user</td>' +
+            '<td class="sales_person" style="text-align: right;">' + orderData[0].seller_name + '</td>' +
         '</tr>' +
     '<tr style="border-bottom: 4px solid rgba(0,0,0,.1);">' +
     '<td style="padding: 10px 0 10px 0;"></td>' +
@@ -356,17 +419,17 @@ function printData()
         '<tr>' +
             '<td style="padding: 10px 0 0 0;"></td>' +
             '<td style="padding: 10px 0 0 0;">Sub Total</td>' +
-            '<td style="text-align: right; adding: 10px 0 0 0;">' + $('#subTotal span').text() + '</td>' +
+            '<td style="text-align: right; adding: 10px 0 0 0;">' + orderData[0].subtotal + '</td>' +
         '</tr>' +
         '<tr>' +
             '<td></td>' +
             '<td>Discount</td>' +
-            '<td style="text-align: right;">' + $('#DiscountAmount span').text() + '</td>' +
+            '<td style="text-align: right;">' + orderData[0].discount + '</td>' +
         '</tr>' +
         '<tr>' +
             '<td></td>' +
             '<td>Total</td>' +
-            '<td style="text-align: right;">' + $('#totalAmount span').text() + '</td>' +
+            '<td style="text-align: right;">' + orderData[0].total_price + '</td>' +
         '</tr>' +
     '<tr style="border-bottom: 4px solid rgba(0,0,0,.1);">' +
     '<td style="padding: 10px 0 10px 0;"></td>' +
@@ -376,16 +439,16 @@ function printData()
         '<tr>' +
             '<td style="padding: 10px 0 0 0;">Cash Tendered</td>' +
             '<td style="padding: 10px 0 0 0;"></td>' +
-            '<td style="text-align: right; padding: 10px 0 0 0;">' + $('.screen').val() + '</td>' +
+            '<td style="text-align: right; padding: 10px 0 0 0;">' + orderData[0].cash_tendered + '</td>' +
         '</tr>' +
         '<tr>' +
             '<td></td>' +
             '<td>Change Due</td>' +
-            '<td style="text-align: right;">' + $('.changeDue span').text() + '</td>' +
+            '<td style="text-align: right;">' + orderData[0].change_due + '</td>' +
         '</tr>' +
     '</table>';
 
-
+    $('#tokenPrint').text('TOKEN: ' + orderData[0].token_no);
     $('#printSection div').append(printTable);
     var divToPrint=document.getElementById("printSection");
     newWin= window.open("",'Print-Window');
@@ -441,7 +504,7 @@ function orderPosting(data){
 function getCurrentToken(){
     var result="";
     $.ajax({
-        url: "catalog",
+        url: "getOrderToken",
         method: "GET",
         dataType: "json",
         async: false,  

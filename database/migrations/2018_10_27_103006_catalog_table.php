@@ -19,7 +19,7 @@ class CatalogTable extends Migration
             $table->integer('category_id');
             $table->string('image');
             $table->float('price');
-            $table->boolean('status');
+            $table->boolean('status')->default(1);
             $table->boolean('discount_status');
             $table->timestamps();
         });

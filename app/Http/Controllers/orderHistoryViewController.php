@@ -13,9 +13,15 @@ class orderHistoryViewController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
-        $orderData=orderSumHistory::all();
+        $orderData=orderSumHistory::all()->sortByDesc('id');
         
         return view('OrderHistory.index')->with(compact('orderData', $orderData));
     }
@@ -63,10 +69,16 @@ class orderHistoryViewController extends Controller
      */
     public function edit($id)
     {
-        // $orderData = orderSumHistory::where('order_id',$id); //Get user with specified id
+        $orderId = orderSumHistory::select('id')->where('order_id',$id)->get()->toArray()[0]['id']; //Get user with specified id
+        
+        $orderFind=new orderSumHistory;
+        $orderFind=$orderFind::find($orderId);
+        
+        $orderFind->order_status=0;
 
-        // return view('OrderHistory.edit', compact('user', 'roles')); //pass user and roles data to view
-
+        $orderFind->save();
+        
+        return redirect('orderHistory');
     }
 
     /**

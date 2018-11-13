@@ -216,11 +216,14 @@
     padding: 10px;
     font-size: 1.1em;
     display: block;
+    text-decoration: none;
+    color: black;
 }
 
 #sidebar ul li a:hover {
-    color: rgba(0,0,0,1);
-    background: #fff;
+    color: rgb(255, 255, 255);
+    background: #2d5aa3;
+    text-decoration: none;
 }
 
 #sidebar ul li.active>a,
@@ -268,6 +271,7 @@ a.article,
 a.article:hover {
     background: #f7f7f7 !important;
     color: #fff !important;
+    text-decoration: none;
 }
 
 /* ---------------------------------------------------
@@ -524,7 +528,7 @@ html,body{
 	box-sizing: border-box;
 	
 	/* Better text styling */
-	font: bold 14px Arial, sans-serif;
+	/* font: 500 14px Arial, sans-serif; */
 }
 
 /* Finally adding some IE9 fallbacks for gradients to finish things up */
@@ -539,7 +543,7 @@ html {
 
 /* Using box shadows to create 3D effects */
 #calculator, #discountTable {
-	width: 22rem;
+	width: 30rem;
 	
 	margin: 50px auto;
 	padding: 10px;
@@ -796,4 +800,9 @@ However, delay the fade out process for 2.5 seconds */
 
 .strike-through {
     text-decoration: line-through;
+}
+
+.table td, .table th{
+    vertical-align: middle;
+    text-align: center;
 }

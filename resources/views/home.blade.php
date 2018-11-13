@@ -7,38 +7,12 @@
   localStorage.setItem("category", JSON.stringify({!! isset($category) ? "$category" : "" !!}));
   localStorage.setItem("quantity", JSON.stringify({!! isset($quantity) ? "$quantity" : "" !!}));
 </script>
-<script src="{{asset('js/jquery-1.12.4.js')}}"></script>
-<script src="{{ asset('js/prefixfree.js') }}" type="text/javascript" type="text/javascript"></script>
-<script>
-        $(document).ready(function () {  
-            $('#dismiss, .overlay').on('click', function () {
-                $('#sidebar').removeClass('active');
-                $('.overlay').removeClass('active');
-            });
-
-            $('#sidebarCollapse').on('click', function () {
-                $('#sidebar').addClass('active');
-                $('.overlay').addClass('active');
-                $('.collapse.in').toggleClass('in');
-                $('a[aria-expanded=true]').attr('aria-expanded', 'false');
-            });
-        });
-</script>
-<script type="text/VBScript" language="VBScript">
-        Sub Print()
-               OLECMDID_PRINT = 6
-               OLECMDEXECOPT_DONTPROMPTUSER = 2
-               OLECMDEXECOPT_PROMPTUSER = 1
-               call WB.ExecWB(OLECMDID_PRINT, OLECMDEXECOPT_DONTPROMPTUSER,1)
-        End Sub
-        document.write "<object ID='WB' WIDTH=0 HEIGHT=0 CLASSID='CLSID:8856F961-340A-11D0-A96B-00C04FD705A2'></object>"
-</script>
 
 <script src="{{ asset('js/calculator.js') }}" type="text/javascript" type="text/javascript"></script>
 <script src="{{ asset('js/catalogEntry.js') }}" type="text/javascript" type="text/javascript"></script>
-<div class="container" id="app" style="display: contents;">
+<div class="container" id="app">
 <iframe name="iframe_a" id="ifrmPrint" style="display: none;"></iframe>
-    <div class="row card-background-color" style="margin: 5px; height: 90%;">
+    <div class="row card-background-color">
         <div class="col col-lg-6 min-width-small-device" style="height: 95%;">
             <div class="row panel panel-primary list-group-item front-row-blue"  id='orderList'>
                 <div class="dropdown">
@@ -54,7 +28,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row orderListSection front-row"  id='orderListBox' style="min-height: 60%;">
+            <div class="row orderListSection front-row"  id='orderListBox' style="min-height: 25rem;">
                 <h1 class="text-muted" style="margin: auto; text-align: center;" id="noOrderText">Order is Empty<br/> Please add</h1>
                 <div id="appendBox" class="w-100"></div>
             </div>
@@ -121,7 +95,7 @@
             <div id="popupWindow" style="display:none;">
                 <div class="row mx-auto justify-content-center" id="afterProcess">
                 </div>
-                <div id="calculator">
+                <div id="calculator" style="max-width: 100%;">
                     <!-- Screen and clear key -->
                     <div class="top">
                         <span class="clear w-25">C</span>
@@ -134,25 +108,21 @@
                             <div class="col px-0 mx-auto"><span class="w-100 h-100">7</span></div>
                             <div class="col px-0 mx-auto"><span class="w-100 h-100">8</span></div>
                             <div class="col px-0 mx-auto"><span class="w-100 h-100">9</span></div>
-                            <div class="col px-0 mx-auto"><span class="w-100 h-100 operator">+</span></div>
                         </div>
                         <div class="row mx-auto">
                             <div class="col px-0"><span class="w-100 h-100">4</span></div>
                             <div class="col px-0"><span class="w-100 h-100">5</span></div>
                             <div class="col px-0"><span class="w-100 h-100">6</span></div>
-                            <div class="col px-0"><span class="w-100 h-100 operator">-</span></div>
                         </div>
                         <div class="row mx-auto">
                             <div class="col px-0"><span class="w-100 h-100">1</span></div>
                             <div class="col px-0"><span class="w-100 h-100">2</span></div>
                             <div class="col px-0"><span class="w-100 h-100">3</span></div>
-                            <div class="col px-0"><span class="w-100 h-100 operator">÷</span></div>
                         </div>
                         <div class="row mx-auto">
                             <div class="col px-0"><span class="w-100 h-100">.</span></div>
                             <div class="col px-0"><span class="w-100 h-100">0</span></div>
-                            <div class="col px-0"><span class="w-100 h-100 eval">=</span></div>
-                            <div class="col px-0"><span class="w-100 h-100 operator">x</span></div>
+                            <div class="col px-0"><span class="w-100 h-100"></span></div>
                         </div>
                     </div>
                 </div>
@@ -217,7 +187,7 @@
     <h1 style="text-align: center;">Preetom</h1>
     <h3 style="text-align: center;">Address</h3>
     <h3 style="text-align: center;">Phone</h3>
-    <h4 style="text-align: center;">Sale</h4>
+    <h2 style="text-align: center;" id="tokenPrint">Sale</h2>
     <hr style="border-top: 4px solid rgba(0,0,0,.1);"/>
     <div>
     </div>
