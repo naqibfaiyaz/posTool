@@ -38,7 +38,7 @@ class RegisterController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest');
+        $this->middleware('auth');
     }
 
     /**
@@ -64,6 +64,12 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        $user_role=$data['role_name'];
+        if($user_role=='user'){
+            $roleAssign=Role::where('name', 'employee')->first();
+        }else{
+            $roleAssign=Role::where('name', 'manager')->first();
+        }
         $user = User::create([
             'name'     => $data['name'],
             'email'    => $data['email'],
@@ -71,7 +77,7 @@ class RegisterController extends Controller
           ]);
           $user
              ->roles()
-             ->attach(Role::where('name', 'employee')->first());
+             ->attach($roleAssign);
           return $user;
     }
 }

@@ -35,6 +35,32 @@
                     @endforeach
                 </select>
             </div>
+            <div class="form-group col-lg-2">
+                <label for="modify_Type">Item Name:</label>
+                <select class="form-control" name="modify_Type">
+                    <option value="all" selected>All</option>
+                    @if($modifyFilter==1)
+                        <option value="1" selected>Add Item</option>
+                    @else
+                        <option value="1">Add Item</option>
+                    @endif
+                    @if($modifyFilter==0)
+                        <option value="0" selected>Remove Item</option>
+                    @else
+                        <option value="0">Remove Item</option>
+                    @endif
+                    @if($modifyFilter==2)
+                        <option value="2" selected>Cancelled Item</option>
+                    @else
+                        <option value="2">Cancelled Item</option>
+                    @endif
+                    @if($modifyFilter==3)
+                        <option value="3" selected>Transational Item</option>
+                    @else
+                        <option value="3">Transational Item</option>
+                    @endif
+                </select>
+            </div>
             <div class="form-group col-lg-1">
                 <label for="category_id"></label>
                 <button id="submitNewInv" class= 'form-control btn btn-primary'>Submit</button>

@@ -11,6 +11,7 @@
                 <button type="button" id="sidebarCollapse" class="navbar-toggler ">
                     <i class="fas fa-bars font-color-white"></i>
                 </button>
+                <a href="{{ route('register') }}"><button type="button" class="btn btn-primary">Register</button></a>
             </nav>
         <!-- Page Content  -->
         <div id="content">

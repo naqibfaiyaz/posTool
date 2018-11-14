@@ -484,7 +484,6 @@ function NewPrint(Copies){
 }
 
 function orderPosting(data){
-    console.log(data);
     $.ajax({
         url: "catalog",
         method: "POST",

@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\orderHistory;
 use App\orderSumHistory;
+use App\catalogQuantity;
+use App\quantityRemark;
+use App\catalog;
+use Auth;
 
 class orderHistoryViewController extends Controller
 {
@@ -59,12 +63,18 @@ class orderHistoryViewController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
-        $orderSumHistory = orderSumHistory::where('order_id',$id)->get(); //Get user with specified id
-        $orderDataDetails = orderHistory::where('order_id',$id)->get(); //Get user with specified id
+        $managerRole=$request->user()->authorizeRoles(['manager']);
 
-        return view('OrderHistory.show')->with(compact('orderDataDetails', $orderDataDetails))->with(compact('orderSumHistory', $orderSumHistory));
+        if($managerRole){
+            $orderSumHistory = orderSumHistory::where('order_id',$id)->get(); //Get user with specified id
+            $orderDataDetails = orderHistory::where('order_id',$id)->get(); //Get user with specified id
+    
+            return view('OrderHistory.show')->with(compact('orderDataDetails', $orderDataDetails))->with(compact('orderSumHistory', $orderSumHistory));
+        }else{
+            abort(403, "Unauthorized User.");
+        }
     }
 
     /**
@@ -75,6 +85,7 @@ class orderHistoryViewController extends Controller
      */
     public function edit($id)
     {
+        $quantityRemark=new quantityRemark;
         $orderId = orderSumHistory::select('id')->where('order_id',$id)->get()->toArray()[0]['id']; //Get user with specified id
         
         $orderFind=new orderSumHistory;
@@ -82,6 +93,14 @@ class orderHistoryViewController extends Controller
         
         $orderFind->order_status=0;
 
+        $allOrders=orderHistory::where('order_id', $id)->get()->toArray();
+
+        foreach($allOrders as $key=>$orderDetails){
+            $catalog_id=catalog::select('id')->where('name',$orderDetails['item_name'])->get()->toArray()[0]['id'];
+            $catalogQuantityId=catalogQuantity::select('id')->where('catalog_id', $catalog_id)->get()->toArray()[0]['id'];
+            $quantityRemark->firstOrCreate(['quantity_id' => $catalogQuantityId, 'modified_quantity' => 0, 'input_type' => 2, 'remarks' => auth::user()->name . " cancelled order no " . $id, 'user' => auth::user()->name]);
+        }
+        // dd($quantityRemark->all()->toArray());
         $orderFind->save();
         
         return redirect('orderHistory');

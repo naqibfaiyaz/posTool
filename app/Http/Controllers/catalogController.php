@@ -63,6 +63,7 @@ class catalogController extends Controller
     {
         $orderToken=new orderToken;
         $orderSumHistory=new orderSumHistory;
+        $quantityRemark=new quantityRemark;
         $allRequest=$request->all()['data'];
 
         foreach($allRequest as $key=>$data){
@@ -82,8 +83,14 @@ class catalogController extends Controller
             unset($orderHistoryData['token_no']);
 
             orderHistory::insert([$orderHistoryData]);
+
             $catalog_id=$data["catalog_id"];
             catalogQuantity::where('catalog_id', $catalog_id)->update(['quantity' => $remaining_quantity]);
+
+            $catalogQuantityId=catalogQuantity::select('id')->where('catalog_id', $catalog_id)->get()->toArray()[0]['id'];
+            $modifiedQuantity=$data['current_quantity']-$data['remaining_quantity'];
+            $CurrentOrderid=$data['order_id'];
+            $quantityRemark->firstOrCreate(['quantity_id' => $catalogQuantityId, 'modified_quantity' => $modifiedQuantity, 'input_type' => 3, 'remarks' => auth::user()->name . " created an order. Order no " . $CurrentOrderid, 'user' => auth::user()->name]);
         }
 
         $orderToken->curr_token_no=$request->all()['data'][0]["token_no"];
@@ -331,13 +338,19 @@ class catalogController extends Controller
         if(isset($_GET['category_filter'])){
             $categoryFilter=$_GET['category_filter'];
         }else{
-            $categoryFilter=null;
+            $categoryFilter='all';
         }
         
         if(isset($_GET['item_filter'])){
             $itemFilter=$_GET['item_filter'];
         }else{
-            $itemFilter=null;
+            $itemFilter='all';
+        }
+        
+        if(isset($_GET['modify_Type'])){
+            $modifyFilter=$_GET['modify_Type'];
+        }else{
+            $modifyFilter='all';
         }
 
         // dump($categoryFilter, $itemFilter);
@@ -349,7 +362,7 @@ class catalogController extends Controller
         $allRemarks=collect();
         foreach($quantityRemark as $key=>$remarksData){
             $inventory=collect();
-            if($remarksData['input_type']){
+            if($remarksData['input_type']==1){
                 $remarksData['modified_quantity']='+' . $remarksData['modified_quantity'];
             }else{
                 $remarksData['modified_quantity']='-' . $remarksData['modified_quantity'];
@@ -397,11 +410,17 @@ class catalogController extends Controller
             }else{
                 return $value;
             }
-        })->sortByDesc(['item_name'])->values();
+        })->filter(function ($value, $key) use ($modifyFilter){
+            if($modifyFilter!='all'){
+                return $value['input_type'] ==$modifyFilter;
+            }else{
+                return $value;
+            }
+        })->sortBy(['item_name'])->values();
         $allRemarks=$allRemarks->values();
         $catalogCategory=$catalogCategory::all()->toArray();
         $catalog=$catalog::all()->toArray();
 
-        return view('inventory.remarks')->with(compact('allRemarks', $allRemarks))->with(compact('catalogCategory', $catalogCategory))->with(compact('catalog', $catalog))->with(compact('categoryFilter', $categoryFilter))->with(compact('itemFilter', $itemFilter));
+        return view('inventory.remarks')->with(compact('allRemarks', $allRemarks))->with(compact('catalogCategory', $catalogCategory))->with(compact('catalog', $catalog))->with(compact('categoryFilter', $categoryFilter))->with(compact('itemFilter', $itemFilter))->with(compact('modifyFilter', $modifyFilter));
     }
 }

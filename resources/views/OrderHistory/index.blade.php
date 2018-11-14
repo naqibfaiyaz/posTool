@@ -40,15 +40,15 @@
                         <td>Processed</td>
                         <td>
                             <!-- <a href="{{ route('orderHistory.edit', $orderDetail->order_id) }}" class="btn btn-info pull-left" style="margin-right: 3px;">Edit</a> -->
-                            <a href="{{ route('orderHistory.show', $orderDetail->order_id) }}" class="btn btn-info pull-left" style="margin-right: 3px;">Details</a>
-                            <a href="{{ route('orderHistory.edit', $orderDetail->order_id) }}" class="btn btn-danger pull-left" style="margin-right: 3px;">Cancel Order</a>
+                            <a href="{{ route('orderHistory.show', $orderDetail->order_id) }}" class="btn btn-info pull-left" style="margin-right: 3px; width: 10rem; margin-bottom: 5px;">Details</a>
+                            <a href="{{ route('orderHistory.edit', $orderDetail->order_id) }}" class="btn btn-danger pull-left" style="margin-right: 3px; width: 10rem; margin-bottom: 5px;">Cancel Order</a>
                         </td>
                         @else
                         <td class="btn btn-danger disabled">Cancelled</td>
                         <td>
                             <!-- <a href="{{ route('orderHistory.edit', $orderDetail->order_id) }}" class="btn btn-info pull-left" style="margin-right: 3px;">Edit</a> -->
-                            <a href="{{ route('orderHistory.show', $orderDetail->order_id) }}" class="btn btn-info pull-left" style="margin-right: 3px;">Details</a>
-                            <a class="btn btn-danger disabled pull-left" style="margin-right: 3px;">Cancel Order</a>
+                            <a href="{{ route('orderHistory.show', $orderDetail->order_id) }}" class="btn btn-info pull-left" style="margin-right: 3px; width: 10rem; margin-bottom: 5px;">Details</a>
+                            <a class="btn btn-danger disabled pull-left" style="margin-right: 3px; width: 10rem; margin-bottom: 5px;">Cancel Order</a>
                         </td>
                     @endif
                     
