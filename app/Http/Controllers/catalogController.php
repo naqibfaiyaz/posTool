@@ -128,18 +128,24 @@ class catalogController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, Request $request)
     {
-        $catalog=catalog::where('id', $id)->get()->toArray();
-        $catalogQuantity=catalogQuantity::all();
-        $catalogCategory=catalogCategory::all();
-        
-        $inventory=$catalog[0];
-        $inventory['category_name']=$catalogCategory->where('id', $catalog[0]['category_id'])->pluck('name')[0];
-        $inventory['quantity']=$catalogQuantity->where('catalog_id', $catalog[0]['id'])->pluck('quantity')[0];
-        $inventory['remarks']=$catalogQuantity->where('catalog_id', $catalog[0]['id'])->pluck('remarks')[0];
+        $managerRole=$request->user()->authorizeRoles(['manager']);
 
-        return view('inventory.edit')->with(compact('inventory', $inventory))->with(compact('catalogCategory', $catalogCategory));
+        if($managerRole){
+            $catalog=catalog::where('id', $id)->get()->toArray();
+            $catalogQuantity=catalogQuantity::all();
+            $catalogCategory=catalogCategory::all();
+            
+            $inventory=$catalog[0];
+            $inventory['category_name']=$catalogCategory->where('id', $catalog[0]['category_id'])->pluck('name')[0];
+            $inventory['quantity']=$catalogQuantity->where('catalog_id', $catalog[0]['id'])->pluck('quantity')[0];
+            $inventory['remarks']=$catalogQuantity->where('catalog_id', $catalog[0]['id'])->pluck('remarks')[0];
+
+            return view('inventory.edit')->with(compact('inventory', $inventory))->with(compact('catalogCategory', $catalogCategory));
+        }else{
+            abort(403, "Unauthorized");
+        }
     }
 
     /**
@@ -334,93 +340,99 @@ class catalogController extends Controller
         return redirect('catalog');
     }
 
-    public function InvRemarks(){
-        if(isset($_GET['category_filter'])){
-            $categoryFilter=$_GET['category_filter'];
-        }else{
-            $categoryFilter='all';
-        }
-        
-        if(isset($_GET['item_filter'])){
-            $itemFilter=$_GET['item_filter'];
-        }else{
-            $itemFilter='all';
-        }
-        
-        if(isset($_GET['modify_Type'])){
-            $modifyFilter=$_GET['modify_Type'];
-        }else{
-            $modifyFilter='all';
-        }
+    public function InvRemarks(Request $request){
+        $managerRole=$request->user()->authorizeRoles(['manager']);
 
-        // dump($categoryFilter, $itemFilter);
-        $catalog=new catalog;
-        $catalogQuantity= new catalogQuantity;
-        $catalogCategory=new catalogCategory;
-        $quantityRemark=quantityRemark::all()->toArray();
-        
-        $allRemarks=collect();
-        foreach($quantityRemark as $key=>$remarksData){
-            $inventory=collect();
-            if($remarksData['input_type']==1){
-                $remarksData['modified_quantity']='+' . $remarksData['modified_quantity'];
+        if($managerRole){
+            if(isset($_GET['category_filter'])){
+                $categoryFilter=$_GET['category_filter'];
             }else{
-                $remarksData['modified_quantity']='-' . $remarksData['modified_quantity'];
+                $categoryFilter='all';
             }
-            $catalogQuantityRemarks=$catalogQuantity->where('id', $remarksData['quantity_id'])->get()->toArray()[0];
-            $catalogRemarks=$catalog->where('id', $catalogQuantityRemarks['catalog_id'])->get()->toArray()[0];
-            $catalogCategoryRemarks=$catalogCategory->where('id', $catalogRemarks['category_id'])->get()->toArray()[0];
+            
+            if(isset($_GET['item_filter'])){
+                $itemFilter=$_GET['item_filter'];
+            }else{
+                $itemFilter='all';
+            }
+            
+            if(isset($_GET['modify_Type'])){
+                $modifyFilter=$_GET['modify_Type'];
+            }else{
+                $modifyFilter='all';
+            }
 
-            collect($remarksData)->each(function ($item, $key) use ($inventory){
-                $inventory->put($key,$item);
-            });
-            collect($catalogQuantityRemarks)->each(function ($item, $key) use ($inventory){
-                if($key!='id'){
+            // dump($categoryFilter, $itemFilter);
+            $catalog=new catalog;
+            $catalogQuantity= new catalogQuantity;
+            $catalogCategory=new catalogCategory;
+            $quantityRemark=quantityRemark::all()->toArray();
+            
+            $allRemarks=collect();
+            foreach($quantityRemark as $key=>$remarksData){
+                $inventory=collect();
+                if($remarksData['input_type']==1){
+                    $remarksData['modified_quantity']='+' . $remarksData['modified_quantity'];
+                }else{
+                    $remarksData['modified_quantity']='-' . $remarksData['modified_quantity'];
+                }
+                $catalogQuantityRemarks=$catalogQuantity->where('id', $remarksData['quantity_id'])->get()->toArray()[0];
+                $catalogRemarks=$catalog->where('id', $catalogQuantityRemarks['catalog_id'])->get()->toArray()[0];
+                $catalogCategoryRemarks=$catalogCategory->where('id', $catalogRemarks['category_id'])->get()->toArray()[0];
+
+                collect($remarksData)->each(function ($item, $key) use ($inventory){
                     $inventory->put($key,$item);
+                });
+                collect($catalogQuantityRemarks)->each(function ($item, $key) use ($inventory){
+                    if($key!='id'){
+                        $inventory->put($key,$item);
+                    }
+                });
+                collect($catalogRemarks)->each(function ($item, $key) use ($inventory){
+                    if($key=='name'){
+                        $key='item_name';
+                    }
+                    if($key!='id'){
+                        $inventory->put($key,$item);
+                    }
+                });
+                collect($catalogCategoryRemarks)->each(function ($item, $key) use ($inventory){
+                    if($key=='name'){
+                        $key='category_name';
+                    }
+                    if($key!='id'){
+                        $inventory->put($key,$item);
+                    }
+                });
+                $allRemarks->push($inventory);
+            }
+
+            $allRemarks = $allRemarks->filter(function ($value, $key) use ($categoryFilter){
+                if($categoryFilter!='all'){
+                    return $value['category_name'] == $categoryFilter;
+                }else{
+                    return $value;
                 }
-            });
-            collect($catalogRemarks)->each(function ($item, $key) use ($inventory){
-                if($key=='name'){
-                    $key='item_name';
+            })->filter(function ($value, $key) use ($itemFilter){
+                if($itemFilter!='all'){
+                    return $value['item_name'] ==$itemFilter;
+                }else{
+                    return $value;
                 }
-                if($key!='id'){
-                    $inventory->put($key,$item);
+            })->filter(function ($value, $key) use ($modifyFilter){
+                if($modifyFilter!='all'){
+                    return $value['input_type'] ==$modifyFilter;
+                }else{
+                    return $value;
                 }
-            });
-            collect($catalogCategoryRemarks)->each(function ($item, $key) use ($inventory){
-                if($key=='name'){
-                    $key='category_name';
-                }
-                if($key!='id'){
-                    $inventory->put($key,$item);
-                }
-            });
-            $allRemarks->push($inventory);
+            })->sortBy(['item_name'])->values();
+            $allRemarks=$allRemarks->values();
+            $catalogCategory=$catalogCategory::all()->toArray();
+            $catalog=$catalog::all()->toArray();
+
+            return view('inventory.remarks')->with(compact('allRemarks', $allRemarks))->with(compact('catalogCategory', $catalogCategory))->with(compact('catalog', $catalog))->with(compact('categoryFilter', $categoryFilter))->with(compact('itemFilter', $itemFilter))->with(compact('modifyFilter', $modifyFilter));
+        }else{
+            abort(403, "Unauthorized");
         }
-
-        $allRemarks = $allRemarks->filter(function ($value, $key) use ($categoryFilter){
-            if($categoryFilter!='all'){
-                return $value['category_name'] == $categoryFilter;
-            }else{
-                return $value;
-            }
-        })->filter(function ($value, $key) use ($itemFilter){
-            if($itemFilter!='all'){
-                return $value['item_name'] ==$itemFilter;
-            }else{
-                return $value;
-            }
-        })->filter(function ($value, $key) use ($modifyFilter){
-            if($modifyFilter!='all'){
-                return $value['input_type'] ==$modifyFilter;
-            }else{
-                return $value;
-            }
-        })->sortBy(['item_name'])->values();
-        $allRemarks=$allRemarks->values();
-        $catalogCategory=$catalogCategory::all()->toArray();
-        $catalog=$catalog::all()->toArray();
-
-        return view('inventory.remarks')->with(compact('allRemarks', $allRemarks))->with(compact('catalogCategory', $catalogCategory))->with(compact('catalog', $catalog))->with(compact('categoryFilter', $categoryFilter))->with(compact('itemFilter', $itemFilter))->with(compact('modifyFilter', $modifyFilter));
     }
 }
