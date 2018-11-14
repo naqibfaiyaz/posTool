@@ -95,7 +95,7 @@ $(document).ready(function () {
         $('.finalProcess').hide();
         orderData=prepareData();
         printData(orderData);
-        // setTimeout(function(){location.reload();},2000);
+        setTimeout(function(){location.reload();},2000);
     })
 
     $(".dropdown-menu").on('click', 'a', function(){
