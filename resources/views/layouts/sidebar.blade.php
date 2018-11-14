@@ -25,6 +25,8 @@
         <li>
             <a href="{{ route('home') }}"><i class="fas fa-tachometer-alt"></i> Order Dashborad</a>
             <a href="{{ route('orderHistory.index') }}"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Order History</a>
+            <a href="{{ route('catalogView') }}"><i class="fas fa-cart-plus" aria-hidden="true"></i> Inventory Management</a>
+            <a href="{{ route('InvRemarks') }}"><i class="fas fa-comment" aria-hidden="true"></i> Quantity Handling</a>
             <!-- <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Pages</a>
             <ul class="collapse list-unstyled" id="pageSubmenu">
                 <li>

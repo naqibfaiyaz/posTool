@@ -21,6 +21,8 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('catalog', 'catalogController');
 
+Route::get('/catalogView', 'catalogController@index')->name('catalogView');
+
 Route::resource('orderHistory', 'orderHistoryViewController');
 
 Route::get('getOrderToken', 'catalogController@getCurrentToken');
