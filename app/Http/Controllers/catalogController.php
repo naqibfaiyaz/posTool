@@ -79,6 +79,7 @@ class catalogController extends Controller
             unset($orderHistoryData['cash_tendered']);
             unset($orderHistoryData['change_due']);
             unset($orderHistoryData['remaining_quantity']);
+            unset($orderHistoryData['token_no']);
 
             orderHistory::insert([$orderHistoryData]);
             $catalog_id=$data["catalog_id"];
@@ -282,18 +283,30 @@ class catalogController extends Controller
     public function newInventory(Request $request){
         $catalog=new catalog;
         $catalogQuantity= new catalogQuantity;
+        
         request()->validate([
+            'newCategory' => 'required if:category_id, AddNew',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'name' => 'required',
             'price' => 'required|numeric',
         ]);
+        
+        $category_id=$request->all()['category_id'];
+        if($request->all()['category_id']=='AddNew'){
+            $catalogCategory= new catalogCategory;
+            $catalogCategory->name=$request->all()['newCategory'];
+
+            $catalogCategory->save();
+
+            $category_id=$catalogCategory->id;
+        }
         
         if ($request->hasFile('image')) {
             $path = $request->image->move(public_path('/images/catalog'), $request->image->getClientOriginalName());
             $catalog->image=$request->image->getClientOriginalName();
         }
 
-        $catalog->category_id=$request->all()['category_id'];
+        $catalog->category_id=$category_id;
         $catalog->name=$request->all()['name'];
         $catalog->price=$request->all()['price'];
         $catalog->discount_status=$request->all()['discount_status'];

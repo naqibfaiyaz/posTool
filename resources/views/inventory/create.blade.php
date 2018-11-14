@@ -13,14 +13,25 @@
     <form method='POST' action="{{route('newInventory')}}" enctype="multipart/form-data">
     <div class='row'>
         <div class='col'>
-            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-            <div class="form-group">
-                <label for="category_id">Category Name:</label>
-                <select class="form-control" name="category_id">
-                    @foreach($catalogCategory as $item)
-                    <option value="{{$item->id}}">{{$item->name}}</option>
-                    @endforeach
-                </select>
+            <div class='row'>
+                <div class='col'>
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <div class="form-group">
+                        <label for="category_id">Category Name:</label>
+                        <select class="form-control" name="category_id">
+                            @foreach($catalogCategory as $item)
+                            <option value="{{$item->id}}">{{$item->name}}</option>
+                            @endforeach
+                            <option value="AddNew">Add New Category</option>
+                        </select>
+                    </div>
+                </div>
+                <div class='col'>
+                    <div class="form-group">
+                        <label for="newCategory">Item Name:</label>
+                        <input type="text" class="form-control" id="newCategory" name="newCategory"  placeholder="Enter Category Name. e.g. Burger, drinks">
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <label for="name">Item Name:</label>

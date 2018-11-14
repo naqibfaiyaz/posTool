@@ -19,11 +19,17 @@ class orderHistoryViewController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $orderData=orderSumHistory::all()->sortByDesc('id');
+        $managerRole=$request->user()->authorizeRoles(['manager']);
         
-        return view('OrderHistory.index')->with(compact('orderData', $orderData));
+        if($managerRole){
+            $orderData=orderSumHistory::all()->sortByDesc('id');
+            
+            return view('OrderHistory.index')->with(compact('orderData', $orderData));
+        }else{
+            abort(403, "Unauthorized User.");
+        }
     }
 
     /**
