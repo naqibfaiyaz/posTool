@@ -9,6 +9,7 @@
                 <button type="button" id="sidebarCollapse" class="navbar-toggler ">
                     <i class="fas fa-bars font-color-white"></i>
                 </button>
+                <div class="row col justify-content-end mx-1" style="color: white;">{{ auth::user()->name }}</div>
                 <a href="{{ route('register') }}"><button type="button" class="btn btn-primary">Register</button></a>
             </nav>
         <!-- Page Content  -->
