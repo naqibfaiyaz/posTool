@@ -109,6 +109,9 @@ class catalogController extends Controller
         $orderSumHistory->change_due=$request->all()['data'][0]["change_due"];
         $orderSumHistory->order_status=1;
         $orderSumHistory->save();
+
+
+        return 1;
     }
 
     /**

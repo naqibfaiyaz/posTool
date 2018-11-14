@@ -28,8 +28,11 @@ $(document).ready(function () {
 				var input = document.querySelector('.screen');
 				var inputVal = input.value;
 				var btnVal = '=';
-				// calculatorFunction(input, btnVal, inputVal, operators, decimalAdded)
-				$('.processOrder').click();
+				if($('.processOrder').is(":visible")){
+					$('.processOrder').click();
+				}else if($('.finalProcess').is(":visible")){
+					$('.finalProcess').click();
+				}
 			}
 		}
 
