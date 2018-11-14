@@ -97,8 +97,10 @@ class orderHistoryViewController extends Controller
 
         foreach($allOrders as $key=>$orderDetails){
             $catalog_id=catalog::select('id')->where('name',$orderDetails['item_name'])->get()->toArray()[0]['id'];
-            $catalogQuantityId=catalogQuantity::select('id')->where('catalog_id', $catalog_id)->get()->toArray()[0]['id'];
-            $quantityRemark->firstOrCreate(['quantity_id' => $catalogQuantityId, 'modified_quantity' => 0, 'input_type' => 2, 'remarks' => auth::user()->name . " cancelled order no " . $id, 'user' => auth::user()->name]);
+            $catalogQuantity=catalogQuantity::where('catalog_id', $catalog_id)->get()->toArray()[0];
+            
+            catalogQuantity::where('catalog_id', $catalog_id)->update(['quantity' => $catalogQuantity['quantity'] + $orderDetails['item_quantity']]);
+            $quantityRemark->firstOrCreate(['quantity_id' => $catalogQuantity['id'], 'modified_quantity' => $orderDetails['item_quantity'], 'input_type' => 2, 'remarks' => auth::user()->name . " cancelled order no " . $id, 'user' => auth::user()->name]);
         }
         // dd($quantityRemark->all()->toArray());
         $orderFind->save();

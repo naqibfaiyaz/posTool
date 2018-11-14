@@ -371,7 +371,7 @@ class catalogController extends Controller
             $allRemarks=collect();
             foreach($quantityRemark as $key=>$remarksData){
                 $inventory=collect();
-                if($remarksData['input_type']==1){
+                if($remarksData['input_type']==1 || $remarksData['input_type']==2){
                     $remarksData['modified_quantity']='+' . $remarksData['modified_quantity'];
                 }else{
                     $remarksData['modified_quantity']='-' . $remarksData['modified_quantity'];
