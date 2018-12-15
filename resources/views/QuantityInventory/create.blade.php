@@ -17,7 +17,7 @@
                 <div class='col'>
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <div class="form-group">
-                        <label for="category_id">Category Name:</label>
+                        <label for="category_id">Inventory Name:</label>
                         <select class="form-control" name="category_id">
                             @foreach($catalogCategory as $item)
                             <option value="{{$item->id}}">{{$item->name}}</option>
@@ -57,20 +57,6 @@
                 <select class="form-control" name="discount_status">
                     <option value=1>Available</option>
                     <option value=0>Not Available</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="show_as_inv">Is Inventory?:</label>
-                <select class="form-control" name="show_as_inv">
-                    <option value=1>Yes</option>
-                    <option value=0>No</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="show_as_product">Is Product?:</label>
-                <select class="form-control" name="show_as_product">
-                <option value=1>Yes</option>
-                    <option value=0>No</option>
                 </select>
             </div>
         </div>

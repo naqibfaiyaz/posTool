@@ -9,23 +9,7 @@
     <hr>
     <div class="table-responsive panel-table" style="margin-bottom: 5rem;">
     <a href="{{ route('catalog.create') }}" class="btn btn-primary pull-left" style="margin-right: 3px; width: 10rem; margin-bottom: 5px;">Create Product</a>
-    @if($filter_type=='inventory_only')
-        <a href="{{ route('catalogView', 'filter_type=inventory_only') }}" class="btn btn-primary pull-left disabled" style="margin-right: 3px; width: 10rem; margin-bottom: 5px;">Show Inventory</a>
-    @else
-    <a href="{{ route('catalogView', 'filter_type=inventory_only') }}" class="btn btn-primary pull-left" style="margin-right: 3px; width: 10rem; margin-bottom: 5px;">Show Inventory</a>
-    @endif
-
-    @if($filter_type=='products_only')
-        <a href="{{ route('catalogView', 'filter_type=products_only') }}" class="btn btn-primary pull-left disabled" style="margin-right: 3px; width: 10rem; margin-bottom: 5px;">Show Products</a>
-    @else
-        <a href="{{ route('catalogView', 'filter_type=products_only') }}" class="btn btn-primary pull-left" style="margin-right: 3px; width: 10rem; margin-bottom: 5px;">Show Products</a>
-    @endif
-
-    @if($filter_type=='all')
-        <a href="{{ route('catalogView', 'filter_type=all') }}" class="btn btn-primary pull-left disabled" style="margin-right: 3px; width: 10rem; margin-bottom: 5px;">Show All</a>
-    @else
-        <a href="{{ route('catalogView', 'filter_type=all') }}" class="btn btn-primary pull-left" style="margin-right: 3px; width: 10rem; margin-bottom: 5px;">Show All</a>
-    @endif
+    <a href="{{ route('catalog.create') }}" class="btn btn-primary pull-left" style="margin-right: 3px; width: 10rem; margin-bottom: 5px;">Create Inventory</a>
         <table class="table table-striped table-active table-hover">
 
             <thead>
@@ -54,7 +38,7 @@
                             @method('PUT')
                             @csrf
                             <div class="input-group mb-3 input-group-sm">
-                                <input style="width: 3rem;" type="number" min=0 class="form-control" name="addQuantity" value=0 placeholder="Quantity">
+                                <input style="width: 4rem;" type="number" min=0 class="form-control" name="addQuantity" value=0 placeholder="Quantity">
                                 <input name="currentQuantity" hidden value="{{ $inventoryData['quantity'] }}">
                                 <div class="input-group-append">
                                     <input class="btn btn-success" type="submit" value="+"/>  

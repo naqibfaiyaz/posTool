@@ -66,38 +66,6 @@
                         @endif
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="show_as_inv">Is Inventory?:</label>
-                    <select class="form-control" name="show_as_inv">
-                        @if($inventory['show_as_inv']==1)
-                            <option value=1 selected>Yes</option>
-                        @else
-                            <option value=1>Yes</option>
-                        @endif
-
-                        @if($inventory['show_as_inv']==0)
-                            <option value=0 selected>No</option>
-                        @else
-                            <option value=0>No</option>
-                        @endif
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="show_as_product">Is Product?:</label>
-                    <select class="form-control" name="show_as_product">
-                        @if($inventory['show_as_product']==1)
-                            <option value=1 selected>Yes</option>
-                        @else
-                            <option value=1>Yes</option>
-                        @endif
-
-                        @if($inventory['show_as_product']==0)
-                            <option value=0 selected>No</option>
-                        @else
-                            <option value=0>No</option>
-                        @endif
-                    </select>
-                </div>
             </div>
         </div>
         <div class="form-group col-lg-8 py-5">

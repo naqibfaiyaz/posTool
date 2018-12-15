@@ -12,6 +12,9 @@ use App\orderToken;
 use App\orderSumHistory;
 use Carbon\Carbon;
 use Auth;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Input;
+use DB;
 
 class catalogController extends Controller
 {
@@ -28,17 +31,44 @@ class catalogController extends Controller
 
     public function index()
     {
-        $catalog=catalog::all()->toArray();
+        if(isset($_GET['filter_type'])){
+            $filter_type=$_GET['filter_type'];
+        }else{
+            $filter_type='inventory_only';
+        }
+        if($filter_type=='products_only'){
+            $catalog=catalog::where('show_as_product', 1)->get();    
+        }else if($filter_type=='all'){
+            $catalog=catalog::all();
+        }else{
+            $catalog=catalog::where('show_as_inv', 1)->get();
+        }
         $catalogQuantity=catalogQuantity::all();
         $catalogCategory=catalogCategory::all();
-        $inventory=[];
-        foreach($catalog as $key=>$catalogData){
-            $inventory[$key]=$catalogData;
-            $inventory[$key]['category']=$catalogCategory->where('id', $catalogData['category_id'])->pluck('name')[0];
-            $inventory[$key]['quantity']=$catalogQuantity->where('catalog_id', $catalogData['id'])->pluck('quantity')[0];
-        }
+        $inventory=collect([]);
+        $inventory=$catalog->map(function($catalogData, $key) use($catalogCategory, $catalogQuantity){
+            return [
+                'id'=>$catalogData['id'],
+                'name'=>$catalogData['name'],
+                'category_id'=>$catalogData['category_id'],
+                'image'=>$catalogData['image'],
+                'price'=>$catalogData['price'],
+                'status'=>$catalogData['status'],
+                'discount_status'=>$catalogData['discount_status'],
+                'category'=>$catalogCategory->where('id', $catalogData['category_id'])->pluck('name')[0],
+                'quantity'=>$catalogQuantity->where('catalog_id', $catalogData['id'])->pluck('quantity')[0],
+            ];
+        });
 
-        return view('inventory.index')->with(compact('inventory', $inventory));
+        $page = Input::get('page', 1);
+        $perPage = 20;
+
+        $data = new LengthAwarePaginator(
+            $inventory->forPage($page, $perPage), $inventory->count(), $perPage, $page
+        );
+        $data->setPath(url()->current());
+
+        return view('inventory.index')->with('inventory', $data)->with('filter_type', $filter_type);
     }
 
     /**
@@ -81,14 +111,17 @@ class catalogController extends Controller
             unset($orderHistoryData['change_due']);
             unset($orderHistoryData['remaining_quantity']);
             unset($orderHistoryData['token_no']);
+            unset($orderHistoryData['modified_quantity']);
 
             orderHistory::insert([$orderHistoryData]);
 
             $catalog_id=$data["catalog_id"];
-            catalogQuantity::where('catalog_id', $catalog_id)->update(['quantity' => $remaining_quantity]);
 
+            foreach($remaining_quantity as $key=>$quantity){
+                catalogQuantity::where('catalog_id', $quantity['id'])->update(['quantity' => $quantity['quantity']]);
+            }
             $catalogQuantityId=catalogQuantity::select('id')->where('catalog_id', $catalog_id)->get()->toArray()[0]['id'];
-            $modifiedQuantity=$data['current_quantity']-$data['remaining_quantity'];
+            $modifiedQuantity=$data['modified_quantity'];
             $CurrentOrderid=$data['order_id'];
             $quantityRemark->firstOrCreate(['quantity_id' => $catalogQuantityId, 'modified_quantity' => $modifiedQuantity, 'input_type' => 3, 'remarks' => auth::user()->name . " created an order. Order no " . $CurrentOrderid, 'user' => auth::user()->name]);
         }
@@ -183,6 +216,8 @@ class catalogController extends Controller
         $catalog->name=$request->all()['name'];
         $catalog->price=$request->all()['price'];
         $catalog->discount_status=$request->all()['discount_status'];
+        $catalog->show_as_inv=$request->all()['show_as_inv'];
+        $catalog->show_as_product=$request->all()['show_as_product'];
         $catalog->status=1;
         
         $catalog->save();
@@ -326,6 +361,8 @@ class catalogController extends Controller
         $catalog->name=$request->all()['name'];
         $catalog->price=$request->all()['price'];
         $catalog->discount_status=$request->all()['discount_status'];
+        $catalog->show_as_inv=$request->all()['show_as_inv'];
+        $catalog->show_as_product=$request->all()['show_as_product'];
         $catalog->status=1;
         
         $catalog->save();
@@ -434,6 +471,45 @@ class catalogController extends Controller
             $catalog=$catalog::all()->toArray();
 
             return view('inventory.remarks')->with(compact('allRemarks', $allRemarks))->with(compact('catalogCategory', $catalogCategory))->with(compact('catalog', $catalog))->with(compact('categoryFilter', $categoryFilter))->with(compact('itemFilter', $itemFilter))->with(compact('modifyFilter', $modifyFilter));
+        }else{
+            abort(403, "Unauthorized");
+        }
+    }
+    
+
+    public function OrderSumamry(Request $request){
+        $managerRole=$request->user()->authorizeRoles(['manager']);
+        
+        if($managerRole){
+            if(isset($_GET['StartDateFilter'])){
+                $StartDateFilter=carbon::parse($_GET['StartDateFilter']);
+            }else{
+                $StartDateFilter=carbon::now();
+            }
+            
+            if(isset($_GET['EndDateFilter'])){
+                $EndDateFilter=carbon::parse($_GET['EndDateFilter']);
+            }else{
+                $EndDateFilter=carbon::now();
+            }
+
+            
+            $allSumamryData=orderHistory::select('item_name', DB::raw('SUM(item_quantity) as quantity'), DB::raw('SUM(item_price) as price'), DB::raw('SUM(item_discount) as discount'))
+                                        ->whereBetween('created_at', [$StartDateFilter->format('Y-m-d 00:00:00'), $EndDateFilter->format('Y-m-d 23:59:59')])
+                                        ->groupBy('item_name')
+                                        ->get();
+            
+            $SummaryTotal=collect([
+                'total_price' => $allSumamryData->sum('price'),
+                'total_discount' => $allSumamryData->sum('discount'),
+                'total_price_after_discount' => $allSumamryData->sum('price') - $allSumamryData->sum('discount'),
+            ]);
+            
+            $allSumamryData=$allSumamryData->values();
+            $EndDate=$EndDateFilter->toDateString(); 
+            $StartDate=$StartDateFilter->toDateString();
+            
+            return view('OrderHistory.summary')->with(compact('allSumamryData', $allSumamryData))->with(compact('SummaryTotal', $SummaryTotal))->with(compact('EndDate', $EndDate))->with(compact('StartDate', $StartDate));
         }else{
             abort(403, "Unauthorized");
         }

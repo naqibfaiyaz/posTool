@@ -11,8 +11,10 @@ class catalog extends Model
      *
      * @var array
      */
+     protected $casts = [ 'category_id' => 'integer', 'price' => 'float', 'discount_status' => 'integer', 'status' => 'integer' ];
+     
     protected $fillable = [
-        'name', 'category_id', 'image', 'price', 'discount_status'
+        'name', 'category_id', 'image', 'price', 'discount_status', 'status'
     ];
 
     /**

@@ -11,6 +11,8 @@ class orderHistory extends Model
      *
      * @var array
      */
+    protected $casts = [ 'token_no' => 'integer', 'item_quantity' => 'integer', 'item_price' => 'float', 'item_discount' => 'float', ];
+    
     protected $fillable = [
         'order_id', 'token_no', 'item_name', 'item_quantity', 'item_price', 'item_discount'
     ];

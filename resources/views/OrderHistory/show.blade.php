@@ -72,16 +72,15 @@
 
 <a class="btn btn-success float-right" style="margin: 50px; color: white;" id="reprintOrder">Reprint</a>
 <div id="printSection" style="display: none;">
-    <h1 style="text-align: center;">Preetom</h1>
-    <h3 style="text-align: center;">Address</h3>
-    <h3 style="text-align: center;">Phone</h3>
-    <h2 style="text-align: center;" id="tokenPrint">Sale</h2>
-    <hr style="border-top: 4px solid rgba(0,0,0,.1);"/>
+    <h4 style="text-align: center;">Preetom</h4>
+    <h4 style="text-align: center;">Address</h4>
+    <h4 style="text-align: center;">Phone</h4>
+    <h4 style="text-align: center;" id="tokenPrint">Sale</h4>
+    <h6 style="text-align: center;" id="copyName">Customer Copy</h6>
     <div>
     </div>
-    <hr style="border-top: 4px solid rgba(0,0,0,.1);"/>
-    <h4 style="text-align: center;">Thank You!<h4>
-    <hr style="border-top: 4px solid rgba(0,0,0,.1);"/>
+    <hr style="border-top: 1px solid rgba(0,0,0,.1);"/>
+    <h4 style="text-align: center; padding: 0; margin: 0;">Thank You!<h4>
 </div>
 <script>
     var orderSumHistory = {!! isset($orderSumHistory) ? "$orderSumHistory": "" !!};

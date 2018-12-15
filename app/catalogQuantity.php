@@ -11,6 +11,8 @@ class catalogQuantity extends Model
      *
      * @var array
      */
+    protected $casts = [ 'catalog_id'=>'integer', 'quantity' => 'integer'];
+    
     protected $fillable = [
         'catalog_id', 'quantity'
     ];

@@ -3,9 +3,13 @@
 @section('content')
 <script>
   var user = {!! auth()->user()->toJson() !!};
-  localStorage.setItem("catalog", JSON.stringify({!! isset($catalog) ? "$catalog": "" !!}));
-  localStorage.setItem("category", JSON.stringify({!! isset($category) ? "$category" : "" !!}));
-  localStorage.setItem("quantity", JSON.stringify({!! isset($quantity) ? "$quantity" : "" !!}));
+  localStorage.clear();
+  var catalog_list={!! isset($catalog) ? "$catalog": "" !!};
+  var category_list={!! isset($category) ? "$category": "" !!};
+  var quantity_list={!! isset($quantity) ? "$quantity": "" !!};
+  localStorage.setItem("catalog", JSON.stringify(catalog_list));
+  localStorage.setItem("category", JSON.stringify(category_list));
+  localStorage.setItem("quantity", JSON.stringify(quantity_list));
 </script>
 
 <script src="{{ asset('js/calculator.js') }}" type="text/javascript" type="text/javascript"></script>
@@ -24,6 +28,7 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="#">Walk In</a>
+                        <a class="dropdown-item" href="#">Take Away</a>
                         <a class="dropdown-item" href="#">Pathao</a>
                     </div>
                 </div>
@@ -67,20 +72,22 @@
                         <div class="row">
                         @foreach ($catalog as $catalogkey => $catalogitem)
                             @if($catalogitem['category_id']==$categoryitem['id'])
-                                <div class="col col-lg-3">
-                                    <div class="panel panel-primary items">
-                                        <a id="catalog_{{ $catalogitem['id'] }}" class="catalog_id" href="#">
-                                            <div class="panel-heading">
-                                                <div class="row justify-content-center font-color-black">{{ $catalogitem['name'] }}</div>
-                                                <div class="row justify-content-center"><img src="{{ asset('images/catalog/') .'/'.$catalogitem['image'] }}" style="height: 4rem;" alt="{{ $catalogitem['image'] }}"/></div>
-                                            </div>
-                                            <div class="panel-footer">
-                                                <span class="row justify-content-center font-color-black">৳{{ $catalogitem['price'] }}</span>
-                                                <div class="clearfix"></div>
-                                            </div>
-                                        </a>
+                                @if($catalogitem['show_as_product'])
+                                    <div class="col col-lg-3">
+                                        <div class="panel panel-primary items">
+                                            <a id="catalog_{{ $catalogitem['id'] }}" class="catalog_id" href="#">
+                                                <div class="panel-heading">
+                                                    <div class="row justify-content-center font-color-black">{{ $catalogitem['name'] }}</div>
+                                                    <div class="row justify-content-center"><img src="{{ asset('images/catalog/') .'/'.$catalogitem['image'] }}" style="height: 4rem;" alt="{{ $catalogitem['image'] }}"/></div>
+                                                </div>
+                                                <div class="panel-footer">
+                                                    <span class="row justify-content-center font-color-black">৳{{ $catalogitem['price'] }}</span>
+                                                    <div class="clearfix"></div>
+                                                </div>
+                                            </a>
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
                             @endif
                         @endforeach
                         </div>
@@ -184,16 +191,16 @@
     </div>
     
 <div id="printSection" style="display: none;">
-    <h1 style="text-align: center;">Preetom</h1>
-    <h3 style="text-align: center;">Address</h3>
-    <h3 style="text-align: center;">Phone</h3>
-    <h2 style="text-align: center;" id="tokenPrint">Sale</h2>
-    <hr style="border-top: 4px solid rgba(0,0,0,.1);"/>
+    <h4 style="text-align: center; margin:0; padding: 5px;">Preetom</h4>
+    <h4 style="text-align: center; margin:0; padding: 5px;">Address</h4>
+    <h4 style="text-align: center; margin:0; padding: 5px;">Phone</h4>
+    <h4 style="text-align: center; margin:0; padding: 10px;" id="tokenPrint">Sale</h4>
+    <h6 style="text-align: center; margin:0; padding: 10px;" id="copyName">Customer Copy</h6>
     <div>
     </div>
-    <hr style="border-top: 4px solid rgba(0,0,0,.1);"/>
-    <h4 style="text-align: center;">Thank You!<h4>
-    <hr style="border-top: 4px solid rgba(0,0,0,.1);"/>
+    <hr style="border-top: 1px solid rgba(0,0,0,.1);"/>
+    <h4 style="text-align: center; padding: 0; margin: 0;">Thank You!<h4>
+    <hr style="border-top: 1px solid rgba(0,0,0,.1);"/>
 </div>
 </div>
 @endsection

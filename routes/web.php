@@ -21,6 +21,8 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('catalog', 'catalogController');
 
+Route::resource('QuantityCatalog', 'QuantityInventoryController');
+
 Route::get('/catalogView', 'catalogController@index')->name('catalogView');
 
 Route::resource('orderHistory', 'orderHistoryViewController');
@@ -36,3 +38,5 @@ Route::put('/updateQuantity/{id}', 'catalogController@updateQuantity')->name('up
 Route::post('/newInventory', 'catalogController@newInventory')->name('newInventory');
 
 Route::get('/InvRemarks', 'catalogController@InvRemarks')->name('InvRemarks');
+
+Route::get('/OrderSumamry', 'catalogController@OrderSumamry')->name('OrderSumamry');

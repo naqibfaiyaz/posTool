@@ -4,17 +4,17 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class orderToken extends Model
+class inventory_identity extends Model
 {
     /**
-    * The attributes that are mass assignable.
-    *
-    * @var array
-    */
-    protected $casts = [ 'curr_token_no'=> 'integer'];
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $casts = [ 'catalog_id'=>'integer', 'quantity' => 'integer'];
     
     protected $fillable = [
-        'curr_token_no', 'token_date'
+        'inventory_name', 'catalog_id', 'quantity'
     ];
 
     /**

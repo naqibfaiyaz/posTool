@@ -11,6 +11,8 @@ class quantityRemark extends Model
     *
     * @var array
     */
+    protected $casts = [ 'quantity_id'=> 'integer', 'modified_quantity' => 'integer', 'input_type' => 'integer', ];
+    
     protected $fillable = [
         'quantity_id', 'modified_quantity', 'remarks', 'user', 'input_type', 'created_at'
     ];
