@@ -302,7 +302,7 @@ class catalogController extends Controller
 
         $catalogDetails->save();
 
-        return redirect('catalog');
+        return redirect()->back()->with('success', ['Success']);
     }
 
     public function updateQuantity(Request $request, $id){
@@ -328,7 +328,7 @@ class catalogController extends Controller
             $quantityRemark->save();
         }
 
-        return redirect('catalog');
+        return redirect()->back()->with('success', ['Success']);
     }
 
     public function newInventory(Request $request){
@@ -402,11 +402,23 @@ class catalogController extends Controller
                 $modifyFilter='all';
             }
 
+            if(isset($_GET['StartDateFilter'])){
+                $StartDateFilter=carbon::parse($_GET['StartDateFilter']);
+            }else{
+                $StartDateFilter=carbon::now();
+            }
+            
+            if(isset($_GET['EndDateFilter'])){
+                $EndDateFilter=carbon::parse($_GET['EndDateFilter']);
+            }else{
+                $EndDateFilter=carbon::now();
+            }
+
             // dump($categoryFilter, $itemFilter);
             $catalog=new catalog;
             $catalogQuantity= new catalogQuantity;
             $catalogCategory=new catalogCategory;
-            $quantityRemark=quantityRemark::all()->toArray();
+            $quantityRemark=quantityRemark::whereBetween('created_at', [$StartDateFilter->format('Y-m-d 00:00:00'), $EndDateFilter->format('Y-m-d 23:59:59')])->take(10000)->get();
             
             $allRemarks=collect();
             foreach($quantityRemark as $key=>$remarksData){
@@ -465,12 +477,22 @@ class catalogController extends Controller
                 }else{
                     return $value;
                 }
-            })->sortBy(['item_name'])->values();
+            })->values();
             $allRemarks=$allRemarks->values();
             $catalogCategory=$catalogCategory::all()->toArray();
             $catalog=$catalog::all()->toArray();
 
-            return view('inventory.remarks')->with(compact('allRemarks', $allRemarks))->with(compact('catalogCategory', $catalogCategory))->with(compact('catalog', $catalog))->with(compact('categoryFilter', $categoryFilter))->with(compact('itemFilter', $itemFilter))->with(compact('modifyFilter', $modifyFilter));
+            $page = Input::get('page', 1);
+            $perPage = 50;
+
+            $data = new LengthAwarePaginator(
+                $allRemarks->forPage($page, $perPage), $allRemarks->count(), $perPage, $page
+            );
+            $data->setPath(url()->current());
+            $EndDate=$EndDateFilter->toDateString(); 
+            $StartDate=$StartDateFilter->toDateString();
+
+            return view('inventory.remarks')->with('allRemarks', $data)->with('exportData', $allRemarks)->with(compact('catalogCategory', $catalogCategory))->with(compact('catalog', $catalog))->with(compact('categoryFilter', $categoryFilter))->with(compact('itemFilter', $itemFilter))->with(compact('modifyFilter', $modifyFilter))->with(compact('EndDate', $EndDate))->with(compact('StartDate', $StartDate));
         }else{
             abort(403, "Unauthorized");
         }

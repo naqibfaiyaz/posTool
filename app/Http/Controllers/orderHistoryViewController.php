@@ -9,6 +9,9 @@ use App\catalogQuantity;
 use App\quantityRemark;
 use App\catalog;
 use Auth;
+use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Input;
 
 class orderHistoryViewController extends Controller
 {
@@ -28,9 +31,29 @@ class orderHistoryViewController extends Controller
         $managerRole=$request->user()->authorizeRoles(['manager']);
         
         if($managerRole){
-            $orderData=orderSumHistory::all()->sortByDesc('id');
+            if(isset($_GET['StartDateFilter'])){
+                $StartDateFilter=carbon::parse($_GET['StartDateFilter']);
+            }else{
+                $StartDateFilter=carbon::now();
+            }
             
-            return view('OrderHistory.index')->with(compact('orderData', $orderData));
+            if(isset($_GET['EndDateFilter'])){
+                $EndDateFilter=carbon::parse($_GET['EndDateFilter']);
+            }else{
+                $EndDateFilter=carbon::now();
+            }
+            $orderData=orderSumHistory::whereBetween('created_at', [$StartDateFilter->format('Y-m-d 00:00:00'), $EndDateFilter->format('Y-m-d 23:59:59')])->orderBy('id', 'desc')->take(10000)->get();
+            
+            $page = Input::get('page', 1);
+            $perPage = 50;
+
+            $data = new LengthAwarePaginator(
+                $orderData->forPage($page, $perPage), $orderData->count(), $perPage, $page
+            );
+            $data->setPath(url()->current());
+            $EndDate=$EndDateFilter->toDateString(); 
+            $StartDate=$StartDateFilter->toDateString();
+            return view('OrderHistory.index')->with('orderData', $data)->with('exportData', $orderData)->with(compact('EndDate', $EndDate))->with(compact('StartDate', $StartDate));
         }else{
             abort(403, "Unauthorized User.");
         }

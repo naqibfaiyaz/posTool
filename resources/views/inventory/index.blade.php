@@ -37,7 +37,9 @@
                     <th>Add Quantity</th>
                     <th>Item Price</th>
                     <th>Item Status</th>
-                    <th>Discount Status</th>
+                    @if($filter_type!='inventory_only')
+                        <th>Discount Status</th>
+                    @endif   
                     <th>Item Image</th>
                 </tr>
             </thead>
@@ -67,10 +69,12 @@
                     @else
                         <td ><span class="badge badge-pill badge-danger" style="width: 7rem; font-size: 14px; font-weight: normal;">Discontinued</span></td>
                     @endif
-                    @if($inventoryData['discount_status'])
-                    <td ><span class="badge badge-pill badge-success" style="width: 7rem; font-size: 14px; font-weight: normal;">Available</span></td>
-                    @else
-                    <td ><span class="badge badge-pill badge-danger" style="width: 7rem; font-size: 14px; font-weight: normal;">Not Available</span></td>
+                    @if($filter_type!='inventory_only')
+                        @if($inventoryData['discount_status'])
+                        <td ><span class="badge badge-pill badge-success" style="width: 7rem; font-size: 14px; font-weight: normal;">Available</span></td>
+                        @else
+                        <td ><span class="badge badge-pill badge-danger" style="width: 7rem; font-size: 14px; font-weight: normal;">Not Available</span></td>
+                        @endif
                     @endif
                     <td><img src="{{ asset('images/catalog/') .'/'.$inventoryData['image'] }}" width=50 height=50 alt="CMPM" class="img-circle"/></td>
                     <td>

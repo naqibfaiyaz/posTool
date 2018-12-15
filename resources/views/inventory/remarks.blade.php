@@ -4,8 +4,16 @@
 @section('title', '| orderHistory')
 
 @section('content')
-
-<div class="col-lg-10 col-lg-offset-1 mx-auto">
+<script src="{{asset('js/export_csv.js')}}"></script>
+<script>
+    var orderData={!! isset($exportData) ? "$exportData": "" !!};
+    
+    function exportData(){
+        downloadCSV('Quantity_handling.csv', orderData);
+    }
+</script>
+<div class="col-lg-10 col-lg-offset-1 mx-auto py-5">
+<input id="export" type="button" onClick="exportData()" value="Export" class="btn btn-primary pull-left"/>
     <hr>
     <form method='GET' action="{{route('InvRemarks')}}">
         <div class="row">
@@ -38,28 +46,46 @@
             <div class="form-group col-lg-2">
                 <label for="modify_Type">Item Name:</label>
                 <select class="form-control" name="modify_Type">
-                    <option value="all" selected>All</option>
-                    @if($modifyFilter==1)
-                        <option value="1" selected>Add Item</option>
-                    @else
+                    @if($modifyFilter=="all")
+                        <option value="all" selected>All</option>
                         <option value="1">Add Item</option>
-                    @endif
-                    @if($modifyFilter==0)
-                        <option value="0" selected>Remove Item</option>
-                    @else
                         <option value="0">Remove Item</option>
-                    @endif
-                    @if($modifyFilter==2)
+                        <option value="2">Cancelled Item</option>
+                        <option value="3">Transational Item</option>
+                    @elseif($modifyFilter==1)
+                        <option value="1" selected>Add Item</option>
+                        <option value="all">All</option>
+                        <option value="0">Remove Item</option>
+                        <option value="2">Cancelled Item</option>
+                        <option value="3">Transational Item</option>
+                    @elseif($modifyFilter==0)
+                        <option value="0" selected>Remove Item</option>
+                        <option value="all">All</option>
+                        <option value="1">Add Item</option>
+                        <option value="2">Cancelled Item</option>
+                        <option value="3">Transational Item</option>
+                    @elseif($modifyFilter==2)
                         <option value="2" selected>Cancelled Item</option>
-                    @else
+                        <option value="all">All</option>
+                        <option value="1">Add Item</option>
+                        <option value="0">Remove Item</option>
+                        <option value="3">Transational Item</option>
+                    @elseif($modifyFilter==3)
+                        <option value="3" selected>Transational Item</option>
+                        <option value="all">All</option>
+                        <option value="1">Add Item</option>
+                        <option value="0">Remove Item</option>
                         <option value="2">Cancelled Item</option>
                     @endif
-                    @if($modifyFilter==3)
-                        <option value="3" selected>Transational Item</option>
-                    @else
-                        <option value="3">Transational Item</option>
-                    @endif
                 </select>
+            </div>
+            <div class="form-group col-lg-2">
+                <label for="StartDateFilter">Start Date:</label>
+                <input type="date" name="StartDateFilter" class="form-control" value="{{$StartDate}}">
+            </div>
+            <div class="form-group col-lg-2">
+                <label for="EndDateFilter">End Date:</label>
+                <input type="date" name="EndDateFilter" class="form-control" value="{{$EndDate}}">
             </div>
             <div class="form-group col-lg-1">
                 <label for="category_id"></label>
@@ -95,7 +121,7 @@
                 </tr>
                 @endforeach
             </tbody>
-
+            <?php if($allRemarks){echo $allRemarks->render(); }?>
         </table>
     </div>
 

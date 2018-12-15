@@ -4,9 +4,33 @@
 @section('title', '| orderHistory')
 
 @section('content')
-
-<div class="col-lg-10 col-lg-offset-1 mx-auto">
+<script src="{{asset('js/export_csv.js')}}"></script>
+<script>
+    var orderData={!! isset($exportData) ? "$exportData": "" !!};
+    
+    function exportData(){
+        downloadCSV('Order_history.csv', orderData);
+    }
+</script>
+<div class="col-lg-10 col-lg-offset-1 mx-auto py-5">
+<input id="export" type="button" onClick="exportData()" value="Export" class="btn btn-primary pull-left"/>
     <hr>
+    <form method='GET' action="{{route('orderHistory.index')}}">
+        <div class="row">
+            <div class="form-group col-lg-2">
+                <label for="StartDateFilter">Start Date:</label>
+                <input type="date" name="StartDateFilter" class="form-control" value="{{$StartDate}}">
+            </div>
+            <div class="form-group col-lg-2">
+                <label for="EndDateFilter">End Date:</label>
+                <input type="date" name="EndDateFilter" class="form-control" value="{{$EndDate}}">
+            </div>
+            <div class="form-group col-lg-1">
+                <label for="category_id"></label>
+                <button id="submitNewInv" class= 'form-control btn btn-primary'>Submit</button>
+            </div>
+        </div>
+    </form>
     <div class="table-responsive panel-table">
         <table class="table table-striped table-active table-hover">
 
@@ -55,10 +79,8 @@
                 </tr>
                 @endforeach
             </tbody>
-
+            <?php if($orderData){echo $orderData->render(); }?>
         </table>
     </div>
-
 </div>
-
 @endsection
