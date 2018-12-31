@@ -28,7 +28,7 @@
                 </div>
                 <div class='col'>
                     <div class="form-group">
-                        <label for="newCategory">Item Name:</label>
+                        <label for="newCategory">Category Name:</label>
                         <input type="text" class="form-control" id="newCategory" name="newCategory"  placeholder="Enter Category Name. e.g. Burger, drinks">
                     </div>
                 </div>

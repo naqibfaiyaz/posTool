@@ -27,7 +27,8 @@ class HomeController extends Controller
     public function index()
     {
         $catalog = catalog::where('status', 1)->get();
-        $category= catalogCategory::all();
+        $ExistingCatalog=catalog::select('category_id')->where('status', 1)->where('show_as_product', 1)->get()->unique('category_id')->values()->toArray();
+        $category= catalogCategory::whereIn('id', $ExistingCatalog)->get();
         $quantity= catalogQuantity::all();
         
         return view('home')->with(compact('catalog', $catalog))->with(compact('category', $category))->with(compact('quantity', $quantity));

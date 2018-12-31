@@ -113,6 +113,8 @@ class catalogController extends Controller
             unset($orderHistoryData['token_no']);
             unset($orderHistoryData['modified_quantity']);
 
+            $orderHistoryData['created_at']=Carbon::now('Asia/Dhaka')->format('Y-m-d H:i:s');
+            $orderHistoryData['updated_at']=Carbon::now('Asia/Dhaka')->format('Y-m-d H:i:s');
             orderHistory::insert([$orderHistoryData]);
 
             $catalog_id=$data["catalog_id"];
@@ -336,10 +338,11 @@ class catalogController extends Controller
         $catalogQuantity= new catalogQuantity;
         
         request()->validate([
-            'newCategory' => 'required if:category_id, AddNew',
+            'newCategory' => 'required if:category_id, AddNew|unique:catalog_categories,name',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'name' => 'required',
             'price' => 'required|numeric',
+            'quantity' => 'required|numeric',
         ]);
         
         $category_id=$request->all()['category_id'];

@@ -21,15 +21,16 @@
             <div class="row panel panel-primary list-group-item front-row-blue"  id='orderList'>
                 <div class="dropdown">
                     <button class="btn btn-primary customerType" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span>Walk In </span>  <i class="fas fa-angle-down px-1" style="color: white;"></i>
+                    <span>Table </span>  <i class="fas fa-angle-down px-1" style="color: white;"></i>
                     </button>
                     <button class="btn btn-primary float-right" type="button" id="clearAll">
                          <i class="fas fa-trash px-1"></i>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Walk In</a>
-                        <a class="dropdown-item" href="#">Take Away</a>
+                        <a class="dropdown-item" href="#">Table</a>
+                        <a class="dropdown-item" href="#">Percel</a>
                         <a class="dropdown-item" href="#">Pathao</a>
+                        <a class="dropdown-item" href="#">Food Panda</a>
                     </div>
                 </div>
             </div>
